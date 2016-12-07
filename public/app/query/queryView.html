@@ -1,0 +1,32 @@
+<h2>Query</h2>
+
+<div ng-class="heatIndex(row.reports)" class="region" ng-repeat="row in data">{{row.reports}} {{heatIndex(row.reports)}}</div>
+<!-- <div ng-class="heatIndex(row.reports)" class="region" ng-repeat="row in data | orderBy:'reports':false:greaterThan">{{row.reports}}</div> -->
+
+<!-- <table class="table">
+  <thead>
+    <tr>
+      <th ng-repeat="column in columns" ng-click="setOrder(column)">{{column}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="row in data | orderBy: order">
+      <td ng-repeat="column in columns">{{row[column] | lowercase}}</td>
+    </tr>
+  </tbody>
+</table> -->
+
+<!-- <table class="table">
+  <thead>
+    <tr>
+      <th ng-click="setOrder('reports')">Reports</th>
+      <th ng-click="setOrder('community_area')">Community Area</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="row in data | orderBy: order">
+      <td>{{row.reports}}</td>
+      <td>{{row.community_area}} {{community_names[row.community_area] | lowercase}}</td>
+    </tr>
+  </tbody>
+</table> -->

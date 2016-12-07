@@ -1,0 +1,15 @@
+{
+  "name": "reportedly",
+  "version": "1.0.0",
+  "description": "A web app to analyze and visualize the City of Chicago's API, Crimes - 2001 to present",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon server/app.js",
+    "start": "node server/app.js"
+  },
+  "author": "jasunde",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}

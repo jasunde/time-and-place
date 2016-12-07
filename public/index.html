@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html ng-app="reportApp">
+  <head>
+    <meta charset="utf-8">
+    <title>hello world</title>
+    <link rel="stylesheet" href="vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/styles.css">
+
+    <script src="vendor/angular.min.js"></script>
+    <script src="vendor/angular-route.min.js"></script>
+
+    <!-- App -->
+    <script src="app/app.module.js"></script>
+
+    <!-- Services -->
+    <script src="app/service/data.js"></script>
+
+    <!-- Query -->
+    <script src="app/query/queryController.js"></script>
+
+  </head>
+  <body>
+    <div class="container">
+      <main ng-view></main>
+    </div>
+  </body>
+</html>

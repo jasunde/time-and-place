@@ -1,13 +1,13 @@
 angular.module('reportApp')
-.controller('QueryController', ['$scope', 'Data', function ($scope, Data) {
+.controller('RegionController', ['$scope', 'Data', function ($scope, Data) {
   // Region nesting:
   // city > community_area
 
   var minReports = 0,
-      maxReports = 0;
+      maxReports = 0,
+      regionPath = [];
 
   $scope.data = [];
-  $scope.columns = [];
   $scope.order = '';
   $scope.community_names = [];
   $scope.limits = {};
@@ -91,11 +91,13 @@ angular.module('reportApp')
       return data.community_area != 0 && typeof data.community_area !== 'undefined';
     });
   }
+  console.log(Data);
 
   // Get the crime numbers
-  Data.query('crime', 'SELECT community_area, COUNT(*) AS reports GROUP BY community_area')
+  Data.query(regionPath)
   .then(function (result) {
     updateData(result.data);
+    console.log(result);
   });
 
   // Get the community area info

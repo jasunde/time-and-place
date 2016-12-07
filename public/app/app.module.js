@@ -1,11 +1,11 @@
 angular.module('reportApp', ['ngRoute'])
 .config(function ($routeProvider) {
   $routeProvider
-  .when('/query', {
-    templateUrl: 'app/query/queryView.html',
-    controller: 'QueryController'
+  .when('/region', {
+    templateUrl: 'app/region/regionView.html',
+    controller: 'RegionController'
   })
   .otherwise({
-    redirectTo: '/query'
+    redirectTo: '/region'
   });
 });

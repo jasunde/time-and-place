@@ -3,7 +3,7 @@ angular.module('reportApp')
 
 
   function makeRequest(regionPath) {
-    var path = '/reports' + regionPath.join('/');
+    var path = '/reports/' + regionPath.join('/');
     return $http.get(path)
     .then(function (response) {
       return response;

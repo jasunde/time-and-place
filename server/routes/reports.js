@@ -15,15 +15,30 @@ var baseUrl = 'https://data.cityofchicago.org/resource/',
     // Prefix for a general query to API
     queryType = '&$query=',
     query = '',
-    url = '';
+    url = '',
+    regionMap = [
+      'district',
+      'beat',
+      'block'
+    ];
+
+// TODO: filter data on the database
 
 /**
  * Build the endpoint for a query
  * @param  String query   SoQL query string
  * @return String         URL endpoint for query to API
  */
-function buildQueryUrl(region) {
-  query = ['SELECT', region + ',', 'COUNT(*) AS reports GROUP BY', region].join(' ');
+function buildQueryUrl(params) {
+  if(params.length) {
+    region = regionMap[0];
+    console.log(params);
+  } else {
+    region = regionMap[0];
+  }
+  query = 'SELECT ' + region + ' AS region, COUNT(*) AS reports '+
+          'GROUP BY ' + region;
+
   console.log(query);
   return baseUrl + dataset + dataType + token + queryType + encodeURI(query);
 }
@@ -37,9 +52,10 @@ function makeRequest(query) {
   // TODO: use pipe to send along responses
 }
 
-// Get overall city data
-router.get('/', function(req, res) {
-  url = buildQueryUrl('community_area');
+function regionCallback(req, res) {
+  console.log(req.params);
+  url = buildQueryUrl(req.params);
+  console.log(url);
   return request.get(url, function (error, response, body) {
     if(error) {
       console.log('GET request error:', err);
@@ -50,6 +66,14 @@ router.get('/', function(req, res) {
       res.send(body);
     }
   });
-});
+}
+
+// TODO: get overall city data instead
+// Get community_area data
+router.get('/', regionCallback);
+
+router.get('/' + regionMap[1])
+
+// Get
 
 module.exports = router;

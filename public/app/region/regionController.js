@@ -9,11 +9,9 @@ angular.module('reportApp')
 
   $scope.data = [];
   $scope.order = '';
-  $scope.community_names = [];
   $scope.limits = {};
 
   $scope.list = '';
-
   $scope.setOrder = function (column) {
     if($scope.order === column) {
       $scope.order = '-' + column;
@@ -32,13 +30,20 @@ angular.module('reportApp')
     return result;
   }
 
+  $scope.drillDown = function (row) {
+    regionPath.push(row.region)
+    getReports();
+  }
+
+  getReports();
+
   /**
    * Update incoming data
    * @param  {Array} data  Array of regions with count of crimes
    * @return {[type]}      [description]
    */
   function updateData(data) {
-    $scope.data = filterData(data);
+    $scope.data = data;
     $scope.limits = getLimits($scope.data);
   }
 
@@ -60,11 +65,11 @@ angular.module('reportApp')
    * @return {Integer}     Smallest number of crimes within the set
    */
   function getMin(data) {
-    return data.reduce(function(previous, {reports: reports}) {
+    return data.reduce(function(previous, data) {
       if(!previous) {
-        previous = reports;
+        previous = data.reports;
       }
-      return Math.min(previous, reports);
+      return Math.min(previous, data.reports);
     });
   }
 
@@ -74,31 +79,22 @@ angular.module('reportApp')
    * @return {Integer}     Largest number of crimes within the set
    */
   function getMax(data) {
-    return data.reduce(function(previous, {reports: reports}) {
+    return data.reduce(function(previous, data) {
       if(!previous) {
-        previous = reports;
+        previous = data.reports;
       }
-      return Math.max(previous, reports);
+      return Math.max(previous, data.reports);
     });
   }
-  /**
-   * Filter bad data
-   * @param  {Array} data  Array of regions with count of crimes
-   * @return {Array}       Filtered array
-   */
-  function filterData(data) {
-    return data.filter(function(data) {
-      return data.community_area != 0 && typeof data.community_area !== 'undefined';
-    });
-  }
-  console.log(Data);
 
   // Get the crime numbers
-  Data.query(regionPath)
-  .then(function (result) {
-    updateData(result.data);
-    console.log(result);
-  });
+  function getReports() {
+    Data.query(regionPath)
+    .then(function (result) {
+      updateData(result.data);
+      console.log(result);
+    });
+  }
 
   // Get the community area info
 //   Data.query('community_area', 'SELECT area_num_1, community')

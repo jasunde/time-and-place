@@ -1,6 +1,8 @@
 <h2>Query</h2>
 
-<div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in data" ng-click="drillDown(region)">{{region.reports}} {{heatIndex(region.reports)}}</div>
+<div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in data" ng-click="drillDown(region)">
+  <div class="reports">{{region.reports}}</div>
+</div>
 <!-- <div ng-class="heatIndex(row.reports)" class="region" ng-repeat="row in data | orderBy:'reports':false:greaterThan">{{row.reports}}</div> -->
 
 <!-- <table class="table">

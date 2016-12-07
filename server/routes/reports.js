@@ -30,30 +30,45 @@ var baseUrl = 'https://data.cityofchicago.org/resource/',
  * @return String         URL endpoint for query to API
  */
 function buildQueryUrl(params) {
-  if(params.length) {
-    region = regionMap[0];
-    console.log(params);
-  } else {
-    region = regionMap[0];
-  }
-  query = 'SELECT ' + region + ' AS region, COUNT(*) AS reports '+
-          'GROUP BY ' + region;
+  params = addLengthProp(params);
 
-  console.log(query);
+  subRegion = regionMap[params.length];
+
+  query = 'SELECT ' + subRegion + ' AS region, COUNT(*) AS reports'
+  if(params.length) {
+    region = regionMap[params.length - 1];
+    query += " WHERE " + region + "='" + params[region] + "'";
+  }
+  query += ' GROUP BY ' + subRegion;
+
+  console.log('See the query:', query);
   return baseUrl + dataset + dataType + token + queryType + encodeURI(query);
 }
 
 /**
  * Make request to SoQL endpoint
- * @param  String  query  SQL query string
- * @return JSON           Results of query
+ * @param  {String}  query  SQL query string
+ * @return {JSON}           Results of query
  */
 function makeRequest(query) {
   // TODO: use pipe to send along responses
 }
 
+/**
+ * Add property of number of poperties in obj to obj as length
+ * @param {Object} obj Any object
+ * @return {Object}
+ */
+function addLengthProp(obj) {
+  var arr = Object.keys(obj);
+  obj.length = 0;
+  arr.forEach(function() {
+    obj.length++;
+  })
+  return obj;
+}
+
 function regionCallback(req, res) {
-  console.log(req.params);
   url = buildQueryUrl(req.params);
   console.log(url);
   return request.get(url, function (error, response, body) {
@@ -72,8 +87,8 @@ function regionCallback(req, res) {
 // Get community_area data
 router.get('/', regionCallback);
 
-router.get('/' + regionMap[1])
+router.get('/:' + regionMap[0], regionCallback);
+router.get('/:' + regionMap[0] + '/:' + regionMap[1], regionCallback);
 
-// Get
 
 module.exports = router;

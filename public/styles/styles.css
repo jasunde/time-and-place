@@ -1,7 +1,17 @@
 .region {
   float: left;
   height: 100px;
+  position: relative;
+  text-align: center;
   width: 100px;
+}
+
+.reports {
+  color: #fff;
+  font-size: 1.5em;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .heat1 {

@@ -38,11 +38,11 @@ function buildQueryUrl(query) {
  * @param  {Object} regionPath req.params object
  * @return {String}            String query
  */
-function groupByRegion(regionPath) {
-  regionPath = addLengthProp(regionPath);
+function groupByRegion(params, query) {
+  regionPath = addLengthProp(params);
 
   subRegion = regionMap[regionPath.length];
-
+  console.log(params);
   query = 'SELECT ' + subRegion + ' AS region, COUNT(*) AS reports';
   if(regionPath.length) {
     region = regionMap[regionPath.length - 1];
@@ -78,7 +78,7 @@ function addLengthProp(obj) {
 }
 
 function regionCallback(req, res) {
-  url = buildQueryUrl(groupByRegion(req.params));
+  url = buildQueryUrl(groupByRegion(req.params, req.query));
   console.log(url);
   return request.get(url, function (error, response, body) {
     if(error) {

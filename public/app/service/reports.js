@@ -1,10 +1,22 @@
 angular.module('reportApp')
 .factory('Reports', ['$http', function ReportsFactory($http) {
 
+  var config = {};
 
   function byRegion(regionPath, timeFrame) {
-    var path = '/reports/' + regionPath.join('/');
-    return $http.get(path)
+    // set params
+    config = {
+      params: {
+        timeFrame: 'hello'
+      }
+    }; 
+
+    console.log(config);
+    // create the path
+    path = '/reports/' + regionPath.join('/');
+
+    // send the request
+    return $http.get(path, config)
     .then(function (response) {
       return response;
     });

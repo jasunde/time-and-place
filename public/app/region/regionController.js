@@ -118,8 +118,8 @@ angular.module('reportApp')
     Reports.byRegion(regionPath, timeFrame)
     .then(function (result) {
       queryIdle = true;
-      updateData(result.data);
       console.log(result);
+      updateData(result.data);
     });
 
   }

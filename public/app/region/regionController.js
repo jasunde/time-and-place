@@ -1,5 +1,5 @@
 angular.module('reportApp')
-.controller('RegionController', ['$scope', 'Data', function ($scope, Data) {
+.controller('RegionController', ['$scope', 'Reports', function ($scope, Reports) {
   // Region nesting:
   // city > police district > police beat > block
 
@@ -8,6 +8,7 @@ angular.module('reportApp')
       regionDepth = 3,
       regionPath = [],
       queryIdle = true,
+      timeFrame = {},
       startDate = new Date(),
       m = moment(startDate),
       day = moment.duration({'days': 1});
@@ -114,7 +115,7 @@ angular.module('reportApp')
   // Get the crime numbers
   function getReports() {
     queryIdle = false;
-    Data.reportsByRegion(regionPath)
+    Reports.byRegion(regionPath, timeFrame)
     .then(function (result) {
       queryIdle = true;
       updateData(result.data);

@@ -1,8 +1,8 @@
 angular.module('reportApp')
-.factory('Data', ['$http', function DataFactory($http) {
+.factory('Reports', ['$http', function ReportsFactory($http) {
 
 
-  function reportsByRegion(regionPath) {
+  function byRegion(regionPath, timeFrame) {
     var path = '/reports/' + regionPath.join('/');
     return $http.get(path)
     .then(function (response) {
@@ -22,6 +22,6 @@ angular.module('reportApp')
   // }
 
   return {
-    reportsByRegion: reportsByRegion
+    byRegion: byRegion
   };
 }]);

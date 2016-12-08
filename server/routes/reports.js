@@ -43,7 +43,7 @@ function groupRegionQuery(params) {
 
   subRegion = regionMap[params.length];
 
-  query = 'SELECT ' + subRegion + ' AS region, COUNT(*) AS reports'
+  query = 'SELECT ' + subRegion + ' AS region, COUNT(*) AS reports';
   if(params.length) {
     region = regionMap[params.length - 1];
     query += " WHERE " + region + "='" + params[region] + "'";
@@ -73,7 +73,7 @@ function addLengthProp(obj) {
   obj.length = 0;
   arr.forEach(function() {
     obj.length++;
-  })
+  });
   return obj;
 }
 

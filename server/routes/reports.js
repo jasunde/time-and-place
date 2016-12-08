@@ -35,18 +35,18 @@ function buildQueryUrl(query) {
 
 /**
  * Build actual SoQL query
- * @param  {Object} params req.params object
- * @return {String}        String query
+ * @param  {Object} regionPath req.params object
+ * @return {String}            String query
  */
-function groupRegionQuery(params) {
-  params = addLengthProp(params);
+function groupByRegion(regionPath) {
+  regionPath = addLengthProp(regionPath);
 
-  subRegion = regionMap[params.length];
+  subRegion = regionMap[regionPath.length];
 
   query = 'SELECT ' + subRegion + ' AS region, COUNT(*) AS reports';
-  if(params.length) {
-    region = regionMap[params.length - 1];
-    query += " WHERE " + region + "='" + params[region] + "'";
+  if(regionPath.length) {
+    region = regionMap[regionPath.length - 1];
+    query += " WHERE " + region + "='" + regionPath[region] + "'";
   }
   query += ' GROUP BY ' + subRegion;
 
@@ -78,7 +78,7 @@ function addLengthProp(obj) {
 }
 
 function regionCallback(req, res) {
-  url = buildQueryUrl(groupRegionQuery(req.params));
+  url = buildQueryUrl(groupByRegion(req.params));
   console.log(url);
   return request.get(url, function (error, response, body) {
     if(error) {

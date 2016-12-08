@@ -1,18 +1,27 @@
 angular.module('reportApp')
 .controller('RegionController', ['$scope', 'Data', function ($scope, Data) {
   // Region nesting:
-  // city > community_area
+  // city > police district > police beat > block
 
   var minReports = 0,
       maxReports = 0,
       regionDepth = 3,
       regionPath = [],
-      queryIdle = true;
+      queryIdle = true,
+      startDate = new Date(),
+      m = moment(startDate),
+      day = moment.duration({'days': 1});
+  
+  console.log('current moment', m.calendar());
+  console.log('24 hours from now', m.add(day).calendar());
 
+  // Region data from API
   $scope.data = [];
   $scope.order = '';
   $scope.limits = {};
   $scope.totalReports = 0;
+
+  // Re-order by column
   $scope.setOrder = function (column) {
     if($scope.order === column) {
       $scope.order = '-' + column;
@@ -21,6 +30,7 @@ angular.module('reportApp')
     }
   };
 
+  // Filter comparator for numbers stored as strings
   $scope.greaterThan = function (a, b) {
     a = parseInt(a.value); b = parseInt(b.value);
     var result = (a < b) ? -1 : 1;
@@ -29,21 +39,23 @@ angular.module('reportApp')
       result = 0;
     }
     return result;
-  }
+  };
 
-  $scope.drillDown = function (row) {
+  // Access sub-regions of a sub-region
+  $scope.drillDown = function (region) {
     if(regionDepth > regionPath.length + 1 && queryIdle) {
-      regionPath.push(row.region)
+      regionPath.push(region.region);
       getReports();
     }
-  }
-
+  };
+  
+  // Access region one level up from current region
   $scope.climbUp = function () {
     if(regionPath.length > 0 && queryIdle) {
       regionPath.pop();
       getReports();
     }
-  }
+  };
 
   getReports();
 
@@ -69,7 +81,7 @@ angular.module('reportApp')
   $scope.heatIndex = function(reports) {
     var range = Math.ceil( (((reports - minReports + 1) / maxReports) ) * 10 );
     return 'heat' + range;
-  }
+  };
 
   /**
    * Get the minimum value in the set

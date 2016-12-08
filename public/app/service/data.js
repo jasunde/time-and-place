@@ -2,7 +2,7 @@ angular.module('reportApp')
 .factory('Data', ['$http', function DataFactory($http) {
 
 
-  function makeRequest(regionPath) {
+  function reportsByRegion(regionPath) {
     var path = '/reports/' + regionPath.join('/');
     return $http.get(path)
     .then(function (response) {
@@ -22,6 +22,6 @@ angular.module('reportApp')
   // }
 
   return {
-    query: makeRequest
+    reportsByRegion: reportsByRegion
   };
 }]);

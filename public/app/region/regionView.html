@@ -1,34 +1,24 @@
-<h2>Query</h2>
+<h2 ng-Click="climbUp()">Query</h2>
 
+<h3>Total Reports: {{totalReports}}</h3>
+
+<!-- Heat color blocks -->
 <div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in data" ng-click="drillDown(region)">
   <div class="reports">{{region.reports}}</div>
+  {{region.region}}
 </div>
-<!-- <div ng-class="heatIndex(row.reports)" class="region" ng-repeat="row in data | orderBy:'reports':false:greaterThan">{{row.reports}}</div> -->
 
-<!-- <table class="table">
-  <thead>
-    <tr>
-      <th ng-repeat="column in columns" ng-click="setOrder(column)">{{column}}</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr ng-repeat="row in data | orderBy: order">
-      <td ng-repeat="column in columns">{{row[column] | lowercase}}</td>
-    </tr>
-  </tbody>
-</table> -->
-
-<!-- <table class="table">
+<table class="table">
   <thead>
     <tr>
       <th ng-click="setOrder('reports')">Reports</th>
-      <th ng-click="setOrder('community_area')">Community Area</th>
+      <th ng-click="setOrder('region')">Region</th>
     </tr>
   </thead>
   <tbody>
     <tr ng-repeat="row in data | orderBy: order">
       <td>{{row.reports}}</td>
-      <td>{{row.community_area}} {{community_names[row.community_area] | lowercase}}</td>
+      <td>{{row.region}}</td>
     </tr>
   </tbody>
-</table> -->
+</table>

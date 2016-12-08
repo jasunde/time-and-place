@@ -5,13 +5,14 @@ angular.module('reportApp')
 
   var minReports = 0,
       maxReports = 0,
-      regionPath = [];
+      regionDepth = 3,
+      regionPath = [],
+      queryIdle = true;
 
   $scope.data = [];
   $scope.order = '';
   $scope.limits = {};
-
-  $scope.list = '';
+  $scope.totalReports = 0;
   $scope.setOrder = function (column) {
     if($scope.order === column) {
       $scope.order = '-' + column;
@@ -31,8 +32,17 @@ angular.module('reportApp')
   }
 
   $scope.drillDown = function (row) {
-    regionPath.push(row.region)
-    getReports();
+    if(regionDepth > regionPath.length + 1 && queryIdle) {
+      regionPath.push(row.region)
+      getReports();
+    }
+  }
+
+  $scope.climbUp = function () {
+    if(regionPath.length > 0 && queryIdle) {
+      regionPath.pop();
+      getReports();
+    }
   }
 
   getReports();
@@ -45,6 +55,7 @@ angular.module('reportApp')
   function updateData(data) {
     $scope.data = data;
     $scope.limits = getLimits($scope.data);
+    $scope.totalReports = countReports(data);
   }
 
   // TODO: find the limits of a set across time
@@ -52,6 +63,7 @@ angular.module('reportApp')
   function getLimits(data) {
     minReports = getMin(data);
     maxReports = getMax(data);
+    console.log(minReports, maxReports);
   }
 
   $scope.heatIndex = function(reports) {
@@ -89,11 +101,20 @@ angular.module('reportApp')
 
   // Get the crime numbers
   function getReports() {
-    Data.query(regionPath)
+    queryIdle = false;
+    Data.reportsByRegion(regionPath)
     .then(function (result) {
+      queryIdle = true;
       updateData(result.data);
       console.log(result);
     });
+
+  }
+
+  function countReports(data) {
+    return data.reduce(function(prev, row) {
+      return prev + parseInt(row.reports);
+    }, 0);
   }
 
   // Get the community area info

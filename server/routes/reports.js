@@ -19,7 +19,7 @@ var baseUrl = 'https://data.cityofchicago.org/resource/',
     regionMap = [
       'district',
       'beat',
-      'block'
+      'block',
     ];
 
 // TODO: filter data on the database
@@ -29,7 +29,16 @@ var baseUrl = 'https://data.cityofchicago.org/resource/',
  * @param  String query   SoQL query string
  * @return String         URL endpoint for query to API
  */
-function buildQueryUrl(params) {
+function buildQueryUrl(query) {
+  return baseUrl + dataset + dataType + token + queryType + encodeURI(query);
+}
+
+/**
+ * Build actual SoQL query
+ * @param  {Object} params req.params object
+ * @return {String}        String query
+ */
+function groupRegionQuery(params) {
   params = addLengthProp(params);
 
   subRegion = regionMap[params.length];
@@ -42,7 +51,7 @@ function buildQueryUrl(params) {
   query += ' GROUP BY ' + subRegion;
 
   console.log('See the query:', query);
-  return baseUrl + dataset + dataType + token + queryType + encodeURI(query);
+  return query;
 }
 
 /**
@@ -69,7 +78,7 @@ function addLengthProp(obj) {
 }
 
 function regionCallback(req, res) {
-  url = buildQueryUrl(req.params);
+  url = buildQueryUrl(groupRegionQuery(req.params));
   console.log(url);
   return request.get(url, function (error, response, body) {
     if(error) {
@@ -84,10 +93,11 @@ function regionCallback(req, res) {
 }
 
 // TODO: get overall city data instead
-// Get community_area data
+// Get district data
 router.get('/', regionCallback);
-
+// Get beat data
 router.get('/:' + regionMap[0], regionCallback);
+// Get block data
 router.get('/:' + regionMap[0] + '/:' + regionMap[1], regionCallback);
 
 

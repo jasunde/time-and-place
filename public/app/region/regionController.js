@@ -24,7 +24,11 @@ angular.module('reportApp')
   $scope.startDate= new Date(timeFrame.startDate);
 
   // Change date with input
-  //
+  $scope.changeDate = function () {
+    timeFrame.startDate = moment($scope.startDate);
+    timeFrame.endDate = timeFrame.startDate.clone().add(timeSpan);
+    getReports();
+  }
 
   // Re-order by column
   $scope.setOrder = function (column) {

@@ -3,6 +3,8 @@ var router = express.Router();
 var request = require('request');
 var secrets = require('../secrets');
 var moment = require('moment');
+var regionMap = require('../config').regionMap;
+
 // Clauses closely resemble SQL but are in fact SoQL
 // Setup from https://dev.socrata.com/foundry/data.cityofchicago.org/6zsd-86xi
 
@@ -17,12 +19,7 @@ var baseUrl = 'https://data.cityofchicago.org/resource/',
     queryType = '&$query=',
     query = '',
     url = '',
-    dateFormat = 'YYYY-MM-DDTHH:mm',
-    regionMap = [
-      'district',
-      'beat',
-      'block',
-    ];
+    dateFormat = 'YYYY-MM-DDTHH:mm';
 
 // TODO: filter data on the database
 

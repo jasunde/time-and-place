@@ -1,7 +1,8 @@
 angular.module('reportApp')
 .factory('GeoData', ['$http', function GeoDataFactory($http) {
-  function subRegionsOf(region) {
-    return $http('/geo/' + region)
+  function subRegions(regionPath) {
+    regionPath = regionPath || [];
+    return $http.get('/geo/' + regionPath.join('/'))
       .then(function (response) {
         console.log(response);
       })
@@ -11,6 +12,6 @@ angular.module('reportApp')
   }
 
   return {
-    subRegionsOf: subRegionsOf
+    subRegions: subRegions
   };
 }]);

@@ -3,7 +3,7 @@ angular.module('reportApp')
   // Region nesting:
   // city > police district > police beat > block
 
-  GeoData.subRegionsOf('city');
+  GeoData.subRegions();
 
   var minReports = 0,
       maxReports = 0,

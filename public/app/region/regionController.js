@@ -1,7 +1,9 @@
 angular.module('reportApp')
-.controller('RegionController', ['$scope', 'Reports', function ($scope, Reports) {
+.controller('RegionController', ['$scope', 'Reports', 'GeoData', function ($scope, Reports, GeoData) {
   // Region nesting:
   // city > police district > police beat > block
+
+  GeoData.subRegionsOf('city');
 
   var minReports = 0,
       maxReports = 0,

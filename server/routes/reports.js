@@ -54,8 +54,8 @@ function groupByRegion(params, query) {
 
   // if time frame exists
   if(timeFrame) {
-    query += " WHERE date>'" + moment(timeFrame.startDate).format(dateFormat) + "'" +
-      " AND date<'" + moment(timeFrame.endDate).format(dateFormat) + "'";
+    query += " WHERE date>'" + moment(timeFrame.startMoment).format(dateFormat) + "'" +
+      " AND date<'" + moment(timeFrame.endMoment).format(dateFormat) + "'";
   }
 
   // if deeper than top level region

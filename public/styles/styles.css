@@ -7,7 +7,7 @@
 }
 
 .reports {
-  color: #fff;
+  color: gainsboro;
   font-size: 1.5em;
   position: relative;
   top: 50%;
@@ -15,41 +15,41 @@
 }
 
 .heat1 {
-  background-color: hsl(240, 90%, 95%);
+  background-color: hsl(300, 90%, 95%);
 }
 
 .heat2 {
-  background-color: hsl(240, 90%, 90%);
+  background-color: hsl(300, 90%, 90%);
 }
 
 .heat3 {
-  background-color: hsl(240, 90%, 85%);
+  background-color: hsl(300, 90%, 85%);
 }
 
 .heat4 {
-  background-color: hsl(240, 90%, 80%);
+  background-color: hsl(300, 90%, 80%);
 }
 
 .heat5 {
-  background-color: hsl(240, 90%, 75%);
+  background-color: hsl(300, 90%, 75%);
 }
 
 .heat6 {
-  background-color: hsl(240, 90%, 70%);
+  background-color: hsl(300, 90%, 70%);
 }
 
 .heat7 {
-  background-color: hsl(240, 90%, 65%);
+  background-color: hsl(300, 90%, 65%);
 }
 
 .heat8 {
-  background-color: hsl(240, 90%, 60%);
+  background-color: hsl(300, 90%, 60%);
 }
 
 .heat9 {
-  background-color: hsl(240, 90%, 55%);
+  background-color: hsl(300, 90%, 55%);
 }
 
 .heat10 {
-  background-color: hsl(240, 90%, 50%);
+  background-color: hsl(300, 90%, 50%);
 }

@@ -7,7 +7,7 @@ angular.module('reportApp')
     // set params
     config = {
       params: {
-        timeFrame: 'hello'
+        timeFrame: timeFrame
       }
     }; 
 

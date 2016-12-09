@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 var secrets = require('../secrets');
+var moment = require('moment');
 // Clauses closely resemble SQL but are in fact SoQL
 // Setup from https://dev.socrata.com/foundry/data.cityofchicago.org/6zsd-86xi
 
@@ -16,6 +17,7 @@ var baseUrl = 'https://data.cityofchicago.org/resource/',
     queryType = '&$query=',
     query = '',
     url = '',
+    dateFormat = 'YYYY-MM-DDTHH:mm',
     regionMap = [
       'district',
       'beat',
@@ -33,6 +35,7 @@ function buildQueryUrl(query) {
   return baseUrl + dataset + dataType + token + queryType + encodeURI(query);
 }
 
+
 /**
  * Build actual SoQL query
  * @param  {Object} regionPath req.params object
@@ -40,14 +43,27 @@ function buildQueryUrl(query) {
  */
 function groupByRegion(params, query) {
   regionPath = addLengthProp(params);
+  if(query.timeFrame) {
+    var timeFrame = JSON.parse(query.timeFrame);
+  }
 
   subRegion = regionMap[regionPath.length];
-  console.log(params);
   query = 'SELECT ' + subRegion + ' AS region, COUNT(*) AS reports';
+
+  // 2016-12-08T16:43
+
+  // if time frame exists
+  if(timeFrame) {
+    query += " WHERE date>'" + moment(timeFrame.startDate).format(dateFormat) + "'" +
+      " AND date<'" + moment(timeFrame.endDate).format(dateFormat) + "'";
+  }
+
+  // if deeper than top level region
   if(regionPath.length) {
     region = regionMap[regionPath.length - 1];
-    query += " WHERE " + region + "='" + regionPath[region] + "'";
+    query += " AND " + region + "='" + regionPath[region] + "'";
   }
+
   query += ' GROUP BY ' + subRegion;
 
   console.log('See the query:', query);

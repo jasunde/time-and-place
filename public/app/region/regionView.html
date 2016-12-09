@@ -2,6 +2,10 @@
 
 <h3>Total Reports: {{totalReports}}</h3>
 
+<form>
+  <input type="date" ng-change="changeDate()" ng-model="startDate">
+</form>
+
 <!-- Heat color blocks -->
 <div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in data" ng-click="drillDown(region)">
   <div class="reports">{{region.reports}}</div>

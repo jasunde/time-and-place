@@ -8,19 +8,23 @@ angular.module('reportApp')
       regionDepth = 3,
       regionPath = [],
       queryIdle = true,
-      timeFrame = {},
-      startDate = new Date(),
-      m = moment(startDate),
-      day = moment.duration({'days': 1});
-  
-  console.log('current moment', m.calendar());
-  console.log('24 hours from now', m.add(day).calendar());
+      dateFormat = 'YYYY-MM-DDTHH:mm',
+      timeSpan = moment.duration({'month': 1}),
+      timeFrame = {
+        startDate: moment().subtract(timeSpan),
+        endDate: moment()
+      };
 
+  
   // Region data from API
   $scope.data = [];
   $scope.order = '';
   $scope.limits = {};
   $scope.totalReports = 0;
+  $scope.startDate= new Date(timeFrame.startDate);
+
+  // Change date with input
+  //
 
   // Re-order by column
   $scope.setOrder = function (column) {

@@ -6,27 +6,36 @@ angular.module('reportApp')
   var minReports = 0,
       maxReports = 0,
       regionDepth = 3,
-      regionPath = [],
       queryIdle = true,
-      dateFormat = 'YYYY-MM-DDTHH:mm',
-      timeSpan = moment.duration({'month': 1}),
-      timeFrame = {
-        startDate: moment().subtract(timeSpan),
-        endDate: moment()
-      };
+      timeSpanMoment = moment.duration(1, 'month');
 
-  
+
   // Region data from API
+  $scope.dateFormat = 'dddd, MMMM Do YYYY',
+  $scope.regionPath = [],
+  $scope.timeFrame = {
+    startMoment: moment().subtract(timeSpanMoment),
+    endMoment: moment()
+  };
   $scope.data = [];
   $scope.order = '';
   $scope.limits = {};
   $scope.totalReports = 0;
-  $scope.startDate= new Date(timeFrame.startDate);
+  $scope.startDate = new Date($scope.timeFrame.startMoment);
+  $scope.timeSpan = 'month';
 
   // Change date with input
-  $scope.changeDate = function () {
-    timeFrame.startDate = moment($scope.startDate);
-    timeFrame.endDate = timeFrame.startDate.clone().add(timeSpan);
+  $scope.changeStartDate = function () {
+    $scope.timeFrame.startMoment = moment($scope.startDate);
+    $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(timeSpanMoment);
+    getReports();
+  }
+
+  // Change time span with radio buttons
+  $scope.changeTimeSpan = function () {
+    timeSpanMoment = moment.duration(1, $scope.timeSpan);
+    $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(timeSpanMoment);
+    $scope.endDate = new Date($scope.timeFrame.endDate);
     getReports();
   }
 
@@ -52,16 +61,16 @@ angular.module('reportApp')
 
   // Access sub-regions of a sub-region
   $scope.drillDown = function (region) {
-    if(regionDepth > regionPath.length + 1 && queryIdle) {
-      regionPath.push(region.region);
+    if(regionDepth > $scope.regionPath.length + 1 && queryIdle) {
+      $scope.regionPath.push(region.region);
       getReports();
     }
   };
-  
+
   // Access region one level up from current region
   $scope.climbUp = function () {
-    if(regionPath.length > 0 && queryIdle) {
-      regionPath.pop();
+    if($scope.regionPath.length > 0 && queryIdle) {
+      $scope.regionPath.pop();
       getReports();
     }
   };
@@ -123,7 +132,8 @@ angular.module('reportApp')
   // Get the crime numbers
   function getReports() {
     queryIdle = false;
-    Reports.byRegion(regionPath, timeFrame)
+    console.log($scope.timeFrame);
+    Reports.byRegion($scope.regionPath, $scope.timeFrame)
     .then(function (result) {
       queryIdle = true;
       console.log(result);

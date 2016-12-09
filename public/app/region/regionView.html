@@ -1,9 +1,25 @@
-<h2 ng-click="climbUp()">Query</h2>
+<h2 ng-click="climbUp()">Chicago</h2>
+
+<p>{{timeFrame.startMoment.format(dateFormat)}} - {{timeFrame.endMoment.format(dateFormat)}}</p>
 
 <h3>Total Reports: {{totalReports}}</h3>
 
 <form>
-  <input type="date" ng-change="changeDate()" ng-model="startDate">
+  <label>Start Date:
+  <input type="date" ng-change="changeStartDate()" ng-model="startDate" /></label><br/>
+  <label>Time Span:</label><br/>
+  <label>
+    <input type="radio" ng-model="timeSpan" value="day" ng-change="changeTimeSpan()" />
+    Day
+  </label><br/>
+  <label>
+    <input type="radio" ng-model="timeSpan" value="week" ng-change="changeTimeSpan()" />
+    Week
+  </label><br/>
+  <label>
+    <input type="radio" ng-model="timeSpan" value="month" ng-change="changeTimeSpan()" />
+    Month
+  </label><br/>
 </form>
 
 <!-- Heat color blocks -->

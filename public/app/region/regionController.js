@@ -11,7 +11,6 @@ angular.module('reportApp')
       queryIdle = true,
       timeSpanMoment = moment.duration(1, 'month');
 
-
   // Region data from API
   $scope.dateFormat = 'dddd, MMMM Do YYYY',
   $scope.regionPath = [],

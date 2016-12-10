@@ -1,3 +1,7 @@
+// Interfaces with user and reports service
+// knows what data wants to be displayed
+// requests that data from reports service
+
 angular.module('reportApp')
 .controller('RegionController', ['$scope', 'Reports', function ($scope, Reports) {
   // Region nesting:

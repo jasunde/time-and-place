@@ -1,3 +1,4 @@
+// Gets and stores data from the Chicago API about reports
 angular.module('reportApp')
 .factory('Reports', ['$http', function ReportsFactory($http) {
 
@@ -9,7 +10,7 @@ angular.module('reportApp')
       params: {
         timeFrame: timeFrame
       }
-    }; 
+    };
 
     console.log(config);
     // create the path

@@ -1,3 +1,8 @@
+// Interfaces with the angular reports service and Chicago API
+// - builds queries from reports service info
+// - queries the API
+// - returns response to reports service
+
 var express = require('express');
 var router = express.Router();
 var request = require('request');

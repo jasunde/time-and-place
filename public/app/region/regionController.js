@@ -9,21 +9,23 @@ angular.module('reportApp')
 
   var minReports = 0,
       maxReports = 0,
-      regionDepth = 3,
       queryIdle = true,
-      timeSpanMoment = moment.duration(1, 'month');
-
+      duration = moment.duration(1, 'month');
 
   // Region data from API
-  $scope.dateFormat = 'dddd, MMMM Do YYYY',
-  $scope.regionPath = [],
+  $scope.subRegionHeirarchy = [
+    'district',
+    'beat',
+    'block'
+  ];
+  $scope.dateFormat = 'dddd, MMMM Do YYYY';
+  $scope.regionPath = [];
   $scope.timeFrame = {
-    startMoment: moment().subtract(timeSpanMoment),
+    startMoment: moment().subtract(1, 'month'),
     endMoment: moment()
   };
   $scope.data = [];
-  $scope.order = '';
-  $scope.limits = {};
+  $scope.colOrder = '';
   $scope.totalReports = 0;
   $scope.startDate = new Date($scope.timeFrame.startMoment);
   $scope.timeSpan = 'month';
@@ -31,24 +33,24 @@ angular.module('reportApp')
   // Change date with input
   $scope.changeStartDate = function () {
     $scope.timeFrame.startMoment = moment($scope.startDate);
-    $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(timeSpanMoment);
+    $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(duration);
     getReports();
-  }
+  };
 
   // Change time span with radio buttons
   $scope.changeTimeSpan = function () {
-    timeSpanMoment = moment.duration(1, $scope.timeSpan);
-    $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(timeSpanMoment);
+    duration = moment.duration(1, $scope.timeSpan);
+    $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(duration);
     $scope.endDate = new Date($scope.timeFrame.endDate);
     getReports();
-  }
+  };
 
   // Re-order by column
   $scope.setOrder = function (column) {
-    if($scope.order === column) {
-      $scope.order = '-' + column;
+    if($scope.colOrder === column) {
+      $scope.colOrder = '-' + column;
     } else {
-      $scope.order = column;
+      $scope.colOrder = column;
     }
   };
 
@@ -65,16 +67,16 @@ angular.module('reportApp')
 
   // Access sub-regions of a sub-region
   $scope.drillDown = function (region) {
-    if(regionDepth > $scope.regionPath.length + 1 && queryIdle) {
+    if(($scope.subRegionHeirarchy.length - 1) > $scope.regionPath.length && queryIdle) {
       $scope.regionPath.push(region.region);
       getReports();
     }
   };
 
-  // Access region one level up from current region
-  $scope.climbUp = function () {
-    if($scope.regionPath.length > 0 && queryIdle) {
-      $scope.regionPath.pop();
+  // Access region level up from current region
+  $scope.climbUp = function (level) {
+    if(level < $scope.regionPath.length && queryIdle) {
+      $scope.regionPath = $scope.regionPath.slice(0, level);
       getReports();
     }
   };
@@ -83,13 +85,19 @@ angular.module('reportApp')
 
   /**
    * Update incoming data
-   * @param  {Array} data  Array of regions with count of crimes
-   * @return {[type]}      [description]
+   * @param  {Array} data  Array of sub-regions with count of crimes
+   * @return void
    */
-  function updateData(data) {
+  function updateSubRegions(data) {
     $scope.data = data;
-    $scope.limits = getLimits($scope.data);
-    $scope.totalReports = countReports(data);
+    if(data.length === 0) {
+      minReports = 0;
+      maxReports = 0;
+      $scope.totalReports = 0;
+    } else {
+      getLimits($scope.data);
+      $scope.totalReports = countReports(data);
+    }
   }
 
   // TODO: find the limits of a set across time
@@ -97,7 +105,6 @@ angular.module('reportApp')
   function getLimits(data) {
     minReports = getMin(data);
     maxReports = getMax(data);
-    console.log(minReports, maxReports);
   }
 
   $scope.heatIndex = function(reports) {
@@ -133,17 +140,33 @@ angular.module('reportApp')
     });
   }
 
+  function makeQueryObject() {
+    // Assemble query information
+    var query = {
+      timeFrame: $scope.timeFrame,
+      subRegion: $scope.subRegionHeirarchy[$scope.regionPath.length]
+    };
+
+    // Add region filter to query if exists
+    if($scope.regionPath.length) {
+      var regionNum = $scope.regionPath.length - 1;
+      query.region = {
+        type: $scope.subRegionHeirarchy[regionNum],
+        id: $scope.regionPath[regionNum]
+      };
+    }
+    return query;
+  }
+
   // Get the crime numbers
   function getReports() {
     queryIdle = false;
-    console.log($scope.timeFrame);
-    Reports.byRegion($scope.regionPath, $scope.timeFrame)
-    .then(function (result) {
-      queryIdle = true;
-      console.log(result);
-      updateData(result.data);
-    });
 
+    Reports.bySubRegion(makeQueryObject())
+    .then(function (subRegionData) {
+      queryIdle = true;
+      updateSubRegions(subRegionData);
+    });
   }
 
   function countReports(data) {

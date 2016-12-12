@@ -22,12 +22,7 @@ var baseUrl = 'https://data.cityofchicago.org/resource/',
     queryType = '&$query=',
     query = '',
     url = '',
-    dateFormat = 'YYYY-MM-DDTHH:mm',
-    regionMap = [
-      'district',
-      'beat',
-      'block',
-    ];
+    dateFormat = 'YYYY-MM-DDTHH:mm';
 
 // TODO: filter data on the database
 
@@ -46,16 +41,11 @@ function buildQueryUrl(query) {
  * @param  {Object} regionPath req.params object
  * @return {String}            String query
  */
-function groupByRegion(params, query) {
-  regionPath = addLengthProp(params);
-  if(query.timeFrame) {
-    var timeFrame = JSON.parse(query.timeFrame);
-  }
+function groupByRegion(queryObj) {
+  var subRegion = queryObj.subRegion;
+  var timeFrame = JSON.parse(queryObj.timeFrame);
 
-  subRegion = regionMap[regionPath.length];
   query = 'SELECT ' + subRegion + ' AS region, COUNT(*) AS reports';
-
-  // 2016-12-08T16:43
 
   // if time frame exists
   if(timeFrame) {
@@ -64,9 +54,9 @@ function groupByRegion(params, query) {
   }
 
   // if deeper than top level region
-  if(regionPath.length) {
-    region = regionMap[regionPath.length - 1];
-    query += " AND " + region + "='" + regionPath[region] + "'";
+  if(queryObj.region) {
+    var region = JSON.parse(queryObj.region);
+    query += " AND " + region.type + "='" + region.id + "'";
   }
 
   query += ' GROUP BY ' + subRegion;
@@ -99,7 +89,7 @@ function addLengthProp(obj) {
 }
 
 function regionCallback(req, res) {
-  url = buildQueryUrl(groupByRegion(req.params, req.query));
+  url = buildQueryUrl(groupByRegion(req.query));
   console.log(url);
   return request.get(url, function (error, response, body) {
     if(error) {
@@ -116,10 +106,5 @@ function regionCallback(req, res) {
 // TODO: get overall city data instead
 // Get district data
 router.get('/', regionCallback);
-// Get beat data
-router.get('/:' + regionMap[0], regionCallback);
-// Get block data
-router.get('/:' + regionMap[0] + '/:' + regionMap[1], regionCallback);
-
 
 module.exports = router;

@@ -4,16 +4,15 @@
 
 angular.module('reportApp')
 .controller('RegionController', ['$scope', 'Reports', 'GeoData', function ($scope, Reports, GeoData) {
-  // Region nesting:
-  // city > police district > police beat > block
 
   GeoData.subRegions();
 
-  var minReports = 0,
-      maxReports = 0,
-      queryIdle = true,
+  var queryIdle = true,
       duration = moment.duration(1, 'month');
 
+  /**
+   * Data bound to $scope
+   */
   // Region data from API
   $scope.subRegionHeirarchy = [
     'district',
@@ -32,6 +31,12 @@ angular.module('reportApp')
   $scope.startDate = new Date($scope.timeFrame.startMoment);
   $scope.timeSpan = 'month';
 
+  // Initial getReports
+  getReports();
+
+  /**
+   * Methods bound to $scope
+   */
   // Change date with input
   $scope.changeStartDate = function () {
     $scope.timeFrame.startMoment = moment($scope.startDate);
@@ -83,65 +88,17 @@ angular.module('reportApp')
     }
   };
 
-  getReports();
-
-  /**
-   * Update incoming data
-   * @param  {Array} data  Array of sub-regions with count of crimes
-   * @return void
-   */
-  function updateSubRegions(data) {
-    $scope.data = data;
-    if(data.length === 0) {
-      minReports = 0;
-      maxReports = 0;
-      $scope.totalReports = 0;
-    } else {
-      getLimits($scope.data);
-      $scope.totalReports = countReports(data);
-    }
-  }
-
   // TODO: find the limits of a set across time
 
-  function getLimits(data) {
-    minReports = getMin(data);
-    maxReports = getMax(data);
-  }
-
   $scope.heatIndex = function(reports) {
-    var range = Math.ceil( (((reports - minReports + 1) / maxReports) ) * 10 );
+    var range = Math.ceil( (((reports - Reports.min() + 1) / Reports.max()) ) * 10 );
     return 'heat' + range;
   };
 
   /**
-   * Get the minimum value in the set
-   * @param  {Array} data  Array of regions with count of crimes
-   * @return {Integer}     Smallest number of crimes within the set
+   * Construct an object based on current timeFrame and regionPath
+   * @return {Object} {timeframe, subRegion name, [region: type, id]}
    */
-  function getMin(data) {
-    return data.reduce(function(previous, data) {
-      if(!previous) {
-        previous = data.reports;
-      }
-      return Math.min(previous, data.reports);
-    });
-  }
-
-  /**
-   * Get the maximum value in the set
-   * @param  {Array} data  Array of regions with count of crimes
-   * @return {Integer}     Largest number of crimes within the set
-   */
-  function getMax(data) {
-    return data.reduce(function(previous, data) {
-      if(!previous) {
-        previous = data.reports;
-      }
-      return Math.max(previous, data.reports);
-    });
-  }
-
   function makeQueryObject() {
     // Assemble query information
     var query = {
@@ -161,29 +118,18 @@ angular.module('reportApp')
   }
 
   // Get the crime numbers
+  /**
+   * Make request for new data by sub region
+   * @return {void} Set new data from Reports factory
+   */
   function getReports() {
     queryIdle = false;
 
     Reports.bySubRegion(makeQueryObject())
-    .then(function (subRegionData) {
+    .then(function () {
       queryIdle = true;
-      updateSubRegions(subRegionData);
+      $scope.data = Reports.subRegions();
+      $scope.totalReports = Reports.total();
     });
   }
-
-  function countReports(data) {
-    return data.reduce(function(prev, row) {
-      return prev + parseInt(row.reports);
-    }, 0);
-  }
-
-  // Get the community area info
-//   Data.query('community_area', 'SELECT area_num_1, community')
-//   .then(function (result) {
-//     // console.log(result.data);
-//     result.data.forEach(function(community_area) {
-//       $scope.community_names[community_area.area_num_1] = community_area.community;
-//     });
-//
-//   });
 }]);

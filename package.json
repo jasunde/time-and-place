@@ -4,7 +4,7 @@
   "description": "A web app to analyze and visualize the City of Chicago's API, Crimes - 2001 to present",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon server/app.js",
+    "test": "nodemon --inspect server/app.js",
     "start": "node server/app.js"
   },
   "author": "jasunde",

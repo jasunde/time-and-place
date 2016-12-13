@@ -48,42 +48,22 @@ angular.module('reportApp')
   Geo.subRegions()
   .then(function (data) {
     $scope.geoData = Geo.data();
-    console.log($scope.geoData);
     var path = d3.geoPath();
-    // var bounds = path.bounds($scope.geoData),
 
-    var bounds = groupBounds($scope.geoData);
-     dx = bounds[1][0] - bounds[0][0],
-     dy = bounds[1][1] - bounds[0][1],
-     x = (bounds[0][0] + bounds[1][0]) / 2,
-     y = (bounds[0][1] + bounds[1][1]) / 2,
-     scale = 20 / Math.max(dx / width, dy / height),
-    // scale = 50000,
-    //  translate = [width / 2 - scale * x, height / 2 - scale * y];
-    center = [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2];
-    //  console.log(dx, dy, x, y, scale, translate);
-
-    //  var center = path.centroid($scope.geoData[20]),
-    //      scale = 50000,
-    //      offset = [width/2,height/2];
-        //  pathWidth = bounds[1][0] - bounds[0][0],
-        //  pathHeight = bounds[1][1] - bounds[0][1];
-        console.log(center);
-    var projection = d3.geoMercator();
-    projection.scale(scale)
-      .center(center);
-      // .translate(offset);
-      // .fitExtent([[20, 20],[940, 580]], $scope.geoData);
+    var projection = d3.geoConicEqualArea()
+      .parallels([41.644073, 42.023683])
+      .scale(70000)
+      .translate([width/2,height/2])
+      .rotate([87.73212559411209, 0])
+      .center([0, 41.84449380686466]);
 
     var path = d3.geoPath().projection(projection);
-    console.log($scope.geoData);
     svg.selectAll('path')
       .data($scope.geoData)
       .enter().append('path')
         .attr('stroke', 'magenta')
-        .attr('fill', 'white')
+        .attr('fill', 'transparent')
         .attr('d', path);
-
 
   });
 

@@ -65,6 +65,24 @@ angular.module('reportApp')
     $scope.geoData = Geo.data();
     var path = d3.geoPath();
 
+    var bounds = groupBounds($scope.geoData);
+     dx = bounds[1][0] - bounds[0][0],
+     dy = bounds[1][1] - bounds[0][1],
+     x = (bounds[0][0] + bounds[1][0]) / 2,
+     y = (bounds[0][1] + bounds[1][1]) / 2,
+     scale = 55 / Math.max(Math.abs(dx / width), Math.abs(dy / height));
+
+    var maxRadians = maxDimension(bounds);
+    maxRadians = d3.geoDistance([-87, 41.644073], [-87, 42.023683]);
+    console.log(maxRadians);
+    var circle = d3.geoCircle()
+      .center([-87.73212559411209, 41.84449380686466])
+      // TODO: radians not working out to length of city
+      .radius(maxRadians * 20);
+
+    var circles = [circle()];
+    //  translate = [width / 2 - scale * x, height / 2 - scale * y];
+
     var projection = d3.geoConicEqualArea()
       .parallels([41.644073, 42.023683])
       .scale(70000)
@@ -73,11 +91,17 @@ angular.module('reportApp')
       .center([0, 41.84449380686466]);
 
     var path = d3.geoPath().projection(projection);
+    // svg.selectAll('path')
+    //   .data($scope.geoData)
+    //   .enter().append('path')
+    //     .attr('stroke', 'magenta')
+    //     .attr('fill', 'transparent')
+    //     .attr('d', path);
+
     svg.selectAll('path')
-      .data($scope.geoData)
+        .data(circles)
       .enter().append('path')
-        .attr('stroke', 'magenta')
-        .attr('fill', 'transparent')
+        .attr('fill', 'magenta')
         .attr('d', path);
 
   });

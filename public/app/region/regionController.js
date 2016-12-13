@@ -9,7 +9,8 @@ angular.module('reportApp')
    * Globals for RegionController
    */
   var path,
-      projection;
+      projection,
+      d3Reports = d3.map();
 
   /**
    * GeoPaths using svg
@@ -18,6 +19,11 @@ angular.module('reportApp')
 
   var width = 960;
   var height = 600;
+
+  var color = d3.scaleThreshold()
+    .domain(d3.range(2,10))
+    .range(d3.schemeBuGn[9]);
+
 
   var svg = d3.select('svg')
     .attr('width', width)
@@ -64,13 +70,6 @@ angular.module('reportApp')
       .center([0, 41.84449380686466]);
 
     path = d3.geoPath().projection(projection);
-    svg.selectAll('path')
-      .data($scope.geoData)
-      .enter().append('path')
-        .attr('stroke', 'magenta')
-        .attr('fill', 'transparent')
-        .attr('d', path);
-
   });
 
   var queryIdle = true,
@@ -139,12 +138,15 @@ angular.module('reportApp')
   };
 
   // Access sub-regions of a sub-region
-  $scope.drillDown = function (region) {
+  $scope.drillDown = drillDown;
+
+  function drillDown(region) {
+    console.log(region);
     if(($scope.subRegionHeirarchy.length - 1) > $scope.regionPath.length && queryIdle) {
       $scope.regionPath.push(region.region);
       getReports();
     }
-  };
+  }
 
   // Access region level up from current region
   $scope.climbUp = function (level) {
@@ -156,10 +158,16 @@ angular.module('reportApp')
 
   // TODO: find the limits of a set across time
 
-  $scope.heatIndex = function(reports) {
-    var range = Math.ceil( (((reports - Reports.min() + 1) / Reports.max()) ) * 10 );
+  $scope.heatIndex = heatIndex;
+
+  function heatIndex(reports) {
+    var range = reportRate(reports)
     return 'heat' + range;
-  };
+  }
+
+  function reportRate(reports) {
+    return Math.ceil( (((reports - Reports.min() + 1) / Reports.max()) ) * 10 );
+  }
 
   /**
    * Construct an object based on current timeFrame and regionPath
@@ -183,10 +191,22 @@ angular.module('reportApp')
     return query;
   }
 
-  function addDataToMap() {
-    console.log('geoData:', $scope.geoData)
-    console.log('geoData:', $scope.geoData)
+  function getRegionColor(data) {
+    return color(reportRate(d3Reports.get(+data.properties.dist_num)));
   }
+
+  function updateMap() {
+    var format = d3.format('0>3');
+    console.log('geoData:', $scope.geoData);
+    svg.selectAll('path')
+      .data($scope.geoData)
+        .attr('fill', function(d) { return getRegionColor(d); })
+      .enter().append('path')
+          .on('click', function (d, i) { drillDown({region: format(d.properties.dist_num)}) })
+          .attr('fill', function(d) { return getRegionColor(d); })
+          .attr('d', path);
+  }
+
   // Get the crime numbers
   /**
    * Make request for new data by sub region
@@ -198,8 +218,10 @@ angular.module('reportApp')
     Reports.bySubRegion(makeQueryObject())
     .then(function () {
       queryIdle = true;
+      Reports.subRegions().forEach(function (d){ d3Reports.set(+d.region, +d.reports)});
       $scope.reportData = Reports.subRegions();
       $scope.totalReports = Reports.total();
+      updateMap();
     });
   }
 }]);

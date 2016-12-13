@@ -14,6 +14,10 @@
   transform: translateY(-50%);
 }
 
+svg {
+  background-color: #444;
+}
+
 .heat1 {
   background-color: hsl(300, 90%, 95%);
 }

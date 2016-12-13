@@ -6,6 +6,12 @@ angular.module('reportApp')
 .controller('RegionController', ['$scope', 'Reports', 'Geo', function ($scope, Reports, Geo) {
 
   /**
+   * Globals for RegionController
+   */
+    var path,
+        projection;
+
+  /**
    * GeoPaths using svg
    */
   $scope.geoData = [];
@@ -48,16 +54,16 @@ angular.module('reportApp')
   Geo.subRegions()
   .then(function (data) {
     $scope.geoData = Geo.data();
-    var path = d3.geoPath();
+    path = d3.geoPath();
 
-    var projection = d3.geoConicEqualArea()
+    projection = d3.geoConicEqualArea()
       .parallels([41.644073, 42.023683])
       .scale(70000)
       .translate([width/2,height/2])
       .rotate([87.73212559411209, 0])
       .center([0, 41.84449380686466]);
 
-    var path = d3.geoPath().projection(projection);
+    path = d3.geoPath().projection(projection);
     svg.selectAll('path')
       .data($scope.geoData)
       .enter().append('path')

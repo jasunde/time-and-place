@@ -64,6 +64,11 @@ angular.module('reportApp')
     });
   }
 
+  /**
+   * Query API based on query object
+   * @param  {Object} query {timeframe, subRegion name, [region: type, id]}
+   * @return {Promise}       [description]
+   */
   function bySubRegion(query) {
     // set params
     config = {

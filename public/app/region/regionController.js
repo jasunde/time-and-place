@@ -3,9 +3,174 @@
 // requests that data from reports service
 
 angular.module('reportApp')
-.controller('RegionController', ['$scope', 'Reports', 'GeoData', function ($scope, Reports, GeoData) {
+.controller('RegionController', ['$scope', 'Reports', 'Geo', function ($scope, Reports, Geo) {
 
-  GeoData.subRegions();
+  /**
+   * GeoPaths using svg
+   */
+  $scope.geoData = [];
+
+  var width = 960;
+  var height = 600;
+
+  var svg = d3.select('svg')
+    .attr('width', width)
+    .attr('height', height);
+
+  function groupBounds(paths) {
+    var topLeft = undefined;
+    var bottomRight = undefined;
+    var bounds = [];
+    paths.forEach(function (path) {
+      bounds = d3.geoPath().bounds(path);
+      if(typeof topLeft === 'undefined') {
+        topLeft = bounds[0];
+        bottomRight = bounds[1];
+        console.log('only once.');
+      } else {
+        if(topLeft[0] > bounds[0][0]) {
+          topLeft[0] = bounds[0][0];
+        }
+        if(topLeft[1] < bounds[0][1]) {
+          topLeft[1] = bounds[0][1];
+        }
+        if(bottomRight[0] < bounds[1][0]) {
+          bottomRight[0] = bounds[1][0];
+        }
+        if(bottomRight[1] > bounds[1][1]) {
+          bottomRight[1] = bounds[1][1];
+        }
+      }
+    });
+    return [topLeft, bottomRight];
+  }
+
+  Geo.subRegions()
+  .then(function (data) {
+    $scope.geoData = Geo.data();
+    console.log($scope.geoData);
+    var path = d3.geoPath();
+    // var bounds = path.bounds($scope.geoData),
+
+    var bounds = groupBounds($scope.geoData);
+     dx = bounds[1][0] - bounds[0][0],
+     dy = bounds[1][1] - bounds[0][1],
+     x = (bounds[0][0] + bounds[1][0]) / 2,
+     y = (bounds[0][1] + bounds[1][1]) / 2,
+     scale = 20 / Math.max(dx / width, dy / height),
+    // scale = 50000,
+    //  translate = [width / 2 - scale * x, height / 2 - scale * y];
+    center = [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2];
+    //  console.log(dx, dy, x, y, scale, translate);
+
+    //  var center = path.centroid($scope.geoData[20]),
+    //      scale = 50000,
+    //      offset = [width/2,height/2];
+        //  pathWidth = bounds[1][0] - bounds[0][0],
+        //  pathHeight = bounds[1][1] - bounds[0][1];
+        console.log(center);
+    var projection = d3.geoMercator();
+    projection.scale(scale)
+      .center(center);
+      // .translate(offset);
+      // .fitExtent([[20, 20],[940, 580]], $scope.geoData);
+
+    var path = d3.geoPath().projection(projection);
+    console.log($scope.geoData);
+    svg.selectAll('path')
+      .data($scope.geoData)
+      .enter().append('path')
+        .attr('stroke', 'magenta')
+        .attr('fill', 'white')
+        .attr('d', path);
+
+
+  });
+
+  // var d3Data = [4, 70, 15, 16, 23, 42];
+
+  /**
+   * Bar chart using svg
+   */
+  // var margin = {
+  //       top: 20,
+  //       right: 30,
+  //       bottom: 30,
+  //       left: 40
+  //     },
+  //     height = 500 - margin.top - margin.bottom,
+  //     width = 900 - margin.right - margin.left;
+  //
+  // var y = d3.scaleLinear()
+  //     .range([height, 0]);
+  //
+  // var x = d3.scaleBand()
+  //     .rangeRound([0, width])
+  //     .padding(.2);
+  //
+  // var xAxis = d3.axisBottom()
+  //     .scale(x);
+  //
+  // var yAxis = d3.axisLeft()
+  //     .scale(y)
+  //     .ticks(7);
+  //
+  // var chart = d3.select('.chart')
+  //     .attr('height', height + margin.top + margin.bottom)
+  //     .attr('width', width + margin.right + margin.left)
+  //   .append('g')
+  //     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+  //
+  // d3.csv('data/d3Data.csv', type, function (err, data) {
+  //   x.domain(data.map(function (d) { return d.name; }));
+  //   y.domain([0, d3.max(data, function (d) { return d.value; })]);
+  //
+  //   var barWidth = width / data.length;
+  //
+  //   chart.append('g')
+  //     .attr('class', 'x axis')
+  //     .attr('transform', 'translate(0,' + height + ')')
+  //     .call(xAxis);
+  //
+  //   chart.append('g')
+  //     .attr('class', 'y axis')
+  //     .call(yAxis);
+  //
+  //   chart.selectAll('.bar')
+  //       .data(data)
+  //     .enter().append('rect')
+  //       .attr('class', 'bar')
+  //       .attr('x', function (d) { return x(d.name); })
+  //       .attr('y', function (d) { return y(d.value); })
+  //       .attr('width', x.bandwidth())
+  //       .attr('height', function (d) { return height - y(d.value); });
+
+    // bar.append('text')
+    //     .attr('x', x.bandwidth() / 2)
+    //     .attr('y',  function (d) { return y(d.value) + 3; })
+    //     .attr('dy', '.75em')
+    //     .text(function (d) { return d.value; })
+  // });
+
+  // Coerce value to number
+  function type(d) {
+    d.value = +d.value
+    return d;
+  }
+  /**
+   * Bar chart using divs
+   */
+  // var x = d3.scaleLinear()
+  //   .domain([0, d3.max(d3Data)])
+  //   .range([0, 80]);
+  //
+  // d3.select('.chart')
+  //   .selectAll('div')
+  //     .data(d3Data)
+  //   .enter().append('div')
+  //     .style('width', function (d) { return x(d) + "%" })
+  //     .text(function (d) { return d; });
+
 
   var queryIdle = true,
       duration = moment.duration(1, 'month');

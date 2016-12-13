@@ -66,7 +66,7 @@
 </form>
 
 <!-- Heat color blocks -->
-<div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in data" ng-click="drillDown(region)">
+<div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in reportData" ng-click="drillDown(region)">
   <div class="reports">{{region.reports}}</div>
   {{region.region}}
 </div>
@@ -79,7 +79,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="row in data | orderBy: colOrder">
+    <tr ng-repeat="row in reportData | orderBy: colOrder">
       <td>{{row.reports}}</td>
       <td>{{row.region}}</td>
     </tr>

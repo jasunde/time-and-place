@@ -8,8 +8,8 @@ angular.module('reportApp')
   /**
    * Globals for RegionController
    */
-    var path,
-        projection;
+  var path,
+      projection;
 
   /**
    * GeoPaths using svg
@@ -91,7 +91,7 @@ angular.module('reportApp')
     startMoment: moment().subtract(1, 'month'),
     endMoment: moment()
   };
-  $scope.data = [];
+  $scope.reportData = [];
   $scope.colOrder = '';
   $scope.totalReports = 0;
   $scope.startDate = new Date($scope.timeFrame.startMoment);
@@ -183,6 +183,10 @@ angular.module('reportApp')
     return query;
   }
 
+  function addDataToMap() {
+    console.log('geoData:', $scope.geoData)
+    console.log('geoData:', $scope.geoData)
+  }
   // Get the crime numbers
   /**
    * Make request for new data by sub region
@@ -194,7 +198,7 @@ angular.module('reportApp')
     Reports.bySubRegion(makeQueryObject())
     .then(function () {
       queryIdle = true;
-      $scope.data = Reports.subRegions();
+      $scope.reportData = Reports.subRegions();
       $scope.totalReports = Reports.total();
     });
   }

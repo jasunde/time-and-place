@@ -45,6 +45,21 @@ angular.module('reportApp')
     return [topLeft, bottomRight];
   }
 
+  /**
+   * Returns geoDistance in radians of largest dimension (width or height)
+   * @param  {Array} bounds Array of long and lat numbers
+   * @return {Number}        radians
+   */
+  function maxDimension(bounds) {
+    var topLeft = bounds[0],
+        topRight = [bounds[1][0], bounds[0][1]],
+        bottomRight = bounds[1],
+        bottomLeft = [bounds[0][0], bounds[1][1]];
+    return Math.max(
+      d3.geoDistance(topLeft, topRight),
+      d3.geoDistance(topRight, bottomRight));
+  }
+
   Geo.subRegions()
   .then(function (data) {
     $scope.geoData = Geo.data();

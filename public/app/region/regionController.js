@@ -3,14 +3,17 @@
 // requests that data from reports service
 
 angular.module('reportApp')
-.controller('RegionController', ['$scope', 'Reports', 'Geo', function ($scope, Reports, Geo) {
+.controller('RegionController', ['$scope', 'Reports', 'Geo', '$q', function ($scope, Reports, Geo, $q) {
 
   /**
    * Globals for RegionController
    */
   var path,
+      cityProjection,
       projection,
-      d3Reports = d3.map();
+      d3Reports = d3.map(),
+      // map margin
+      m = 20;
 
   /**
    * GeoPaths using svg
@@ -57,21 +60,6 @@ angular.module('reportApp')
     return [topLeft, bottomRight];
   }
 
-  Geo.subRegions()
-  .then(function (data) {
-    $scope.geoData = Geo.data();
-    path = d3.geoPath();
-
-    projection = d3.geoConicEqualArea()
-      .parallels([41.644073, 42.023683])
-      .scale(70000)
-      .translate([width/2,height/2])
-      .rotate([87.73212559411209, 0])
-      .center([0, 41.84449380686466]);
-
-    path = d3.geoPath().projection(projection);
-  });
-
   var queryIdle = true,
       duration = moment.duration(1, 'month');
 
@@ -97,7 +85,13 @@ angular.module('reportApp')
   $scope.timeSpan = 'month';
 
   // Initial getReports
-  getReports();
+  $q.all([
+    getMap(),
+    getReports()
+  ]).then(function (promiseHash) {
+    console.log(promiseHash);
+    updateMap()
+  });
 
   /**
    * Methods bound to $scope
@@ -106,7 +100,9 @@ angular.module('reportApp')
   $scope.changeStartDate = function () {
     $scope.timeFrame.startMoment = moment($scope.startDate);
     $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(duration);
-    getReports();
+    getReports().then(function () {
+      updateMap();
+    });
   };
 
   // Change time span with radio buttons
@@ -114,7 +110,9 @@ angular.module('reportApp')
     duration = moment.duration(1, $scope.timeSpan);
     $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(duration);
     $scope.endDate = new Date($scope.timeFrame.endDate);
-    getReports();
+    getReports().then(function () {
+      updateMap();
+    });
   };
 
   // Re-order by column
@@ -144,7 +142,13 @@ angular.module('reportApp')
     console.log(region);
     if(($scope.subRegionHeirarchy.length - 1) > $scope.regionPath.length && queryIdle) {
       $scope.regionPath.push(region.region);
-      getReports();
+      $q.all([
+        getMap(),
+        getReports()
+      ]).then(function (promiseHash) {
+        console.log(promiseHash);
+        updateMap();
+      })
     }
   }
 
@@ -152,7 +156,13 @@ angular.module('reportApp')
   $scope.climbUp = function (level) {
     if(level < $scope.regionPath.length && queryIdle) {
       $scope.regionPath = $scope.regionPath.slice(0, level);
-      getReports();
+      $q.all([
+        getMap(),
+        getReports()
+      ]).then(function (promiseHash) {
+        console.log(promiseHash);
+        updateMap();
+      });
     }
   };
 
@@ -165,8 +175,22 @@ angular.module('reportApp')
     return 'heat' + range;
   }
 
+  // TODO: something is wrong with reportRate...
   function reportRate(reports) {
     return Math.ceil( (((reports - Reports.min() + 1) / Reports.max()) ) * 10 );
+  }
+
+  function getSubRegionType() {
+    return $scope.subRegionHeirarchy[$scope.regionPath.length];
+  }
+
+  function getRegionType() {
+    if($scope.regionPath.length) {
+      var type = $scope.subRegionHeirarchy[$scope.regionPath.length - 1];
+    } else {
+      type = 'city';
+    }
+    return type;
   }
 
   /**
@@ -177,7 +201,7 @@ angular.module('reportApp')
     // Assemble query information
     var query = {
       timeFrame: $scope.timeFrame,
-      subRegion: $scope.subRegionHeirarchy[$scope.regionPath.length]
+      subRegion: getSubRegionType()
     };
 
     // Add region filter to query if exists
@@ -192,19 +216,75 @@ angular.module('reportApp')
   }
 
   function getRegionColor(data) {
-    return color(reportRate(d3Reports.get(+data.properties.dist_num)));
+
+    return color(reportRate(d3Reports.get(data.properties.id)));
+  }
+
+  function getRegionMap(id) {
+    var regionMaps = $scope.geoData[getRegionType()];
+    return regionMaps.find(function (region) {
+      return region.properties.id === id;
+    })
   }
 
   function updateMap() {
-    var format = d3.format('0>3');
-    console.log('geoData:', $scope.geoData);
+    if($scope.regionPath.length) {
+      var parentRegion = getRegionMap($scope.regionPath[$scope.regionPath.length - 1]);
+      projection.fitExtent([[m, m],[width - m, height - m]], parentRegion);
+      path = d3.geoPath().projection(projection);
+    } else {
+      path = d3.geoPath().projection(cityProjection);
+    }
+
+    var subRegion = getSubRegionType();
+
+    var data = $scope.geoData[subRegion];
+    svg.selectAll('path').remove();
     svg.selectAll('path')
-      .data($scope.geoData)
+      .data(data)
         .attr('fill', function(d) { return getRegionColor(d); })
       .enter().append('path')
-          .on('click', function (d, i) { drillDown({region: format(d.properties.dist_num)}) })
+          .on('click', function (d, i) { drillDown({
+            region: d.properties.id
+          }) })
           .attr('fill', function(d) { return getRegionColor(d); })
-          .attr('d', path);
+          .attr('d', path)
+      .exit().remove();
+
+
+  }
+
+  function getMap() {
+    var type = 'city',
+        regionId = 0;
+
+    if($scope.regionPath.length) {
+      type = $scope.subRegionHeirarchy[$scope.regionPath.length - 1];
+      regionId = $scope.regionPath[$scope.regionPath.length - 1];
+    }
+
+    var query = {
+      type: type,
+      id: regionId
+    };
+
+    return Geo.subRegions(query)
+    .then(function (data) {
+
+      $scope.geoData[getSubRegionType()] = Geo.data();
+      path = d3.geoPath();
+
+      projection = d3.geoConicEqualArea()
+      .parallels([41.644073, 42.023683])
+      .scale(70000)
+      .translate([width/2,height/2])
+      .rotate([87.73212559411209, 0])
+      .center([0, 41.84449380686466]);
+
+      cityProjection = projection;
+
+      path = d3.geoPath().projection(cityProjection);
+    });
   }
 
   // Get the crime numbers
@@ -215,13 +295,13 @@ angular.module('reportApp')
   function getReports() {
     queryIdle = false;
 
-    Reports.bySubRegion(makeQueryObject())
+    return Reports.bySubRegion(makeQueryObject())
     .then(function () {
       queryIdle = true;
-      Reports.subRegions().forEach(function (d){ d3Reports.set(+d.region, +d.reports)});
+      d3Reports.clear();
+      Reports.subRegions().forEach(function (d){ d3Reports.set(d.region, +d.reports)});
       $scope.reportData = Reports.subRegions();
       $scope.totalReports = Reports.total();
-      updateMap();
     });
   }
 }]);

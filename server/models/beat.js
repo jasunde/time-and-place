@@ -1,11 +1,11 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var districtSchema = new Schema({
+var beatSchema = new Schema({
   type: {type: String, required: true},
   properties: {
-    dist_num: {type: String},
-    dist_label: {type: String},
+    beat_num: {type: String},
+    beat_label: {type: String},
     id: {type: String},
     type: {type: String}
   },
@@ -13,8 +13,8 @@ var districtSchema = new Schema({
     type: {type: String},
     coordinates: {type: [[[[Number]]]]}
   }
-}, {strict: false});
+});
 
-var District = mongoose.model('District', districtSchema);
+var Beat = mongoose.model('Beat', beatSchema);
 
-module.exports = District;
+module.exports = Beat;

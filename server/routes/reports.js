@@ -95,7 +95,7 @@ function regionCallback(req, res) {
   console.log(url);
   return request.get(url, function (error, response, body) {
     if(error) {
-      console.log('GET request error:', err);
+      console.log('GET request error:', error);
       res.sendStatus(500);
     }
 

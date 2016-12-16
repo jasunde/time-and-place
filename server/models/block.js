@@ -1,11 +1,11 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var districtSchema = new Schema({
+var blockSchema = new Schema({
   type: {type: String, required: true},
   properties: {
-    dist_num: {type: String},
-    dist_label: {type: String},
+    blockce10: {type: String},
+    name10: {type: String},
     id: {type: String},
     type: {type: String}
   },
@@ -13,8 +13,8 @@ var districtSchema = new Schema({
     type: {type: String},
     coordinates: {type: [[[[Number]]]]}
   }
-}, {strict: false});
+});
 
-var District = mongoose.model('District', districtSchema);
+var Block = mongoose.model('Block', blockSchema);
 
-module.exports = District;
+module.exports = Block;

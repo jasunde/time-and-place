@@ -3,10 +3,14 @@ angular.module('reportApp')
 
   var data = [];
 
-  function subRegions(regionPath) {
-    regionPath = regionPath || [];
-    return $http.get('/geo')
+  function subRegions(query) {
+    var config = {
+      params: query
+    };
+
+    return $http.get('/geo', config)
       .then(function (response) {
+        console.log(response);
         data = response.data;
       })
       .catch(function (err) {

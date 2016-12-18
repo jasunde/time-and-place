@@ -3,7 +3,7 @@
 // requests that data from reports service
 
 angular.module('reportApp')
-.controller('RegionController', ['$scope', 'Reports', 'Geo', '$q', function ($scope, Reports, Geo, $q) {
+.controller('RegionController', ['$scope', 'Reports', 'Geo', '$q', '$window', '$document', function ($scope, Reports, Geo, $q, $window, $document) {
 
   /**
    * Globals for RegionController
@@ -13,51 +13,89 @@ angular.module('reportApp')
       projection,
       d3Reports = d3.map(),
       // map margin
-      m = 20;
+      m = 20,
+      svg;
+
+  $window.addEventListener('resize', function () {
+    width = $window.innerWidth;
+    height = $window.innerHeight;
+
+    svg = d3.select('svg')
+    .attr('width', width)
+    .attr('height', height);
+
+    updateMap();
+  });
 
   /**
    * GeoPaths using svg
    */
   $scope.geoData = [];
 
-  var width = 960;
-  var height = 600;
+  console.log($window);
+
+  var width = $window.innerWidth;
+  var height = $window.innerHeight;
+  var cityBounds = {
+    type: 'Feature',
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [42.032719, -87.947080],
+          [42.032719, -87.516810],
+          [41.639781, -87.516810],
+          [41.639781, -87.947080],
+          [42.032719, -87.947080]
+        ]
+      ]
+    }
+  };
 
   var color = d3.scaleThreshold()
     .domain(d3.range(2,10))
-    .range(d3.schemeBuGn[9]);
+    .range(d3.schemeBlues[9]);
 
 
-  var svg = d3.select('svg')
+  svg = d3.select('svg')
     .attr('width', width)
     .attr('height', height);
+
+  var chart = d3.select('.chart');
+
+  var mask = d3.select('mask');
 
   function groupBounds(paths) {
     var topLeft = undefined;
     var bottomRight = undefined;
     var bounds = [];
+    // TODO: Figure out why bounds aren't as expected
     paths.forEach(function (path) {
       bounds = d3.geoPath().bounds(path);
       if(typeof topLeft === 'undefined') {
         topLeft = bounds[0];
         bottomRight = bounds[1];
-        console.log('only once.');
       } else {
-        if(topLeft[0] > bounds[0][0]) {
-          topLeft[0] = bounds[0][0];
-        }
-        if(topLeft[1] < bounds[0][1]) {
-          topLeft[1] = bounds[0][1];
-        }
-        if(bottomRight[0] < bounds[1][0]) {
-          bottomRight[0] = bounds[1][0];
-        }
-        if(bottomRight[1] > bounds[1][1]) {
-          bottomRight[1] = bounds[1][1];
-        }
+        topLeft[0] = Math.min(topLeft[0], bounds[0][0] - 0.006);
+        topLeft[1] = Math.max(topLeft[1], bounds[0][1] + 0.035);
+        bottomRight[0] = Math.max(bottomRight[0], bounds[1][0] + 0.006);
+        bottomRight[1] = Math.min(bottomRight[1], bounds[1][1] - 0.058);
       }
     });
-    return [topLeft, bottomRight];
+
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[
+          topLeft,
+          [bottomRight[0],topLeft[1]],
+          bottomRight,
+          [topLeft[0],bottomRight[1]],
+          topLeft
+        ]]
+      }
+    };
   }
 
   var queryIdle = true,
@@ -72,7 +110,7 @@ angular.module('reportApp')
     'beat',
     'block'
   ];
-  $scope.dateFormat = 'dddd, MMMM Do YYYY';
+  $scope.dateFormat = 'MMMM Do YYYY';
   $scope.regionPath = [];
   $scope.timeFrame = {
     startMoment: moment().subtract(1, 'month'),
@@ -89,7 +127,6 @@ angular.module('reportApp')
     getMap(),
     getReports()
   ]).then(function (promiseHash) {
-    console.log(promiseHash);
     updateMap()
   });
 
@@ -139,7 +176,6 @@ angular.module('reportApp')
   $scope.drillDown = drillDown;
 
   function drillDown(region) {
-    console.log(region);
     if(($scope.subRegionHeirarchy.length - 1) > $scope.regionPath.length && queryIdle) {
       $scope.regionPath.push(region.region);
       $q.all([
@@ -228,19 +264,24 @@ angular.module('reportApp')
   }
 
   function updateMap() {
+    var subRegion = getSubRegionType();
+
+    var data = $scope.geoData[subRegion];
+
     if($scope.regionPath.length) {
       var parentRegion = getRegionMap($scope.regionPath[$scope.regionPath.length - 1]);
       projection.fitExtent([[m, m],[width - m, height - m]], parentRegion);
       path = d3.geoPath().projection(projection);
+
     } else {
-      path = d3.geoPath().projection(cityProjection);
+      parentRegion = groupBounds(data);
+
+      projection.fitExtent([[m, m],[width - m, height - m]], parentRegion);
+      path = d3.geoPath().projection(projection);
     }
 
-    var subRegion = getSubRegionType();
-
-    var data = $scope.geoData[subRegion];
-    svg.selectAll('path').remove();
-    svg.selectAll('path')
+    chart.selectAll('path').remove();
+    chart.selectAll('path')
       .data(data)
         .attr('fill', function(d) { return getRegionColor(d); })
       .enter().append('path')
@@ -251,7 +292,21 @@ angular.module('reportApp')
           .attr('d', path)
       .exit().remove();
 
+    mask.selectAll('path').remove();
 
+    if($scope.regionPath.length) {
+      mask.selectAll('path')
+      .data([parentRegion])
+      .enter().append('path')
+      .attr('fill', '#ffffff')
+      .attr('d', path);
+    } else {
+      mask.selectAll('path')
+      .data([parentRegion])
+      .enter().append('path')
+      .attr('fill', '#ffffff')
+      .attr('d', path);
+    }
   }
 
   function getMap() {
@@ -286,6 +341,8 @@ angular.module('reportApp')
       path = d3.geoPath().projection(cityProjection);
     });
   }
+
+
 
   // Get the crime numbers
   /**

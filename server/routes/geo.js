@@ -78,7 +78,7 @@ function getByBeat(req, res) {
           res.sendStatus(500);
         } else {
           blocks.forEach(function (block) {
-            block.set('properties.id', block.properties.blockce10);
+            block.set('properties.id', block.properties['block_name']);
             block.set('properties.type', 'block');
           })
           res.send(blocks);

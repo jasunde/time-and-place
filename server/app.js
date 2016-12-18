@@ -5,8 +5,6 @@ var mongoConnection = require('./modules/mongoConnection');
 var reports = require('./routes/reports');
 var geo = require('./routes/geo');
 
-var massageData = require('./massageData');
-
 app.set('port', process.env.PORT || 3000);
 
 app.get('/', function functionName(req, res) {

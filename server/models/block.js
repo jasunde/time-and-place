@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 var blockSchema = new Schema({
   type: {type: String, required: true},
   properties: {
+    block_name: {type: String},
     blockce10: {type: String},
     name10: {type: String},
     id: {type: String},

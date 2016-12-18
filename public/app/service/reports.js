@@ -78,7 +78,6 @@ angular.module('reportApp')
     // send the request
     return $http.get('/reports', config)
     .then(function (response) {
-      console.log(response.data);
       // only return the data
       updateSubregions(response.data);
     });

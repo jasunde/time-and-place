@@ -19,59 +19,68 @@
 }
 </style>
 
-<svg class="chart"></svg>
+<div class="container-fluid">
+  <h2>Time and Place <small>Crime Reports in Chicago</small></h2>
 
-<h2>Chicago</h2>
-
-<ul class="breadcrumb">
-  <li
+  <ul class="breadcrumb">
+    <li
     ng-class="{'active': regionPath.length === 0}"
     ng-click="climbUp(0)">
     <a ng-if="regionPath.length > 0">City</a>
     <span ng-if="regionPath.length === 0">City</span>
   </li>
   <li
-    ng-class="{'active': regionPath.length - 1 === $index}"
-    ng-repeat="regions in regionPath"
-    ng-click="climbUp($index + 1)">
-    <a ng-if="$index < regionPath.length - 1">
-      {{subRegionHeirarchy[$index]}} {{regionPath[$index]}}
-    </a>
-    <span ng-if="$index === regionPath.length - 1">
-      {{subRegionHeirarchy[$index]}} {{regionPath[$index]}}
-    </span>
-  </li>
+  ng-class="{'active': regionPath.length - 1 === $index}"
+  ng-repeat="regions in regionPath"
+  ng-click="climbUp($index + 1)">
+  <a ng-if="$index < regionPath.length - 1">
+    {{subRegionHeirarchy[$index]}} {{regionPath[$index]}}
+  </a>
+  <span ng-if="$index === regionPath.length - 1">
+    {{subRegionHeirarchy[$index]}} {{regionPath[$index]}}
+  </span>
+</li>
 </ul>
 
-<p>{{timeFrame.startMoment.format(dateFormat)}} - {{timeFrame.endMoment.format(dateFormat)}}</p>
 
-<h3>Total Reports: {{totalReports}}</h3>
+<h3>{{timeFrame.startMoment.format(dateFormat)}} - {{timeFrame.endMoment.format(dateFormat)}} <small>Total Reports: {{totalReports}}</small>
+</h3>
 
 <form>
   <label>Start Date:
-  <input type="date" ng-change="changeStartDate()" ng-model="startDate" /></label><br/>
-  <label>Time Span:</label><br/>
-  <label>
-    <input type="radio" ng-model="timeSpan" value="day" ng-change="changeTimeSpan()" />
-    Day
-  </label><br/>
-  <label>
-    <input type="radio" ng-model="timeSpan" value="week" ng-change="changeTimeSpan()" />
-    Week
-  </label><br/>
-  <label>
-    <input type="radio" ng-model="timeSpan" value="month" ng-change="changeTimeSpan()" />
-    Month
-  </label><br/>
-</form>
-
-<!-- Heat color blocks -->
-<div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in reportData" ng-click="drillDown(region)">
-  <div class="reports">{{region.reports}}</div>
-  {{region.region}}
+    <input type="date" ng-change="changeStartDate()" ng-model="startDate" /></label>
+    <label>Time Span:</label>
+    <label>
+      <input type="radio" ng-model="timeSpan" value="day" ng-change="changeTimeSpan()" />
+      Day
+    </label>
+    <label>
+      <input type="radio" ng-model="timeSpan" value="week" ng-change="changeTimeSpan()" />
+      Week
+    </label>
+    <label>
+      <input type="radio" ng-model="timeSpan" value="month" ng-change="changeTimeSpan()" />
+      Month
+    </label>
+  </form>
 </div>
 
-<table class="table">
+<!-- Map -->
+<svg>
+  <defs>
+    <mask id="mask"></mask>
+  </defs>
+  <g class="chart" mask="url(#mask)"></g>
+</svg>
+<!-- <br/> -->
+
+<!-- Heat color blocks -->
+<!-- <div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in reportData" ng-click="drillDown(region)">
+  <div class="reports">{{region.reports}}</div>
+  {{region.region}}
+</div> -->
+
+<!-- <table class="table">
   <thead>
     <tr>
       <th ng-click="setOrder('reports')">Reports</th>
@@ -84,4 +93,4 @@
       <td>{{row.region}}</td>
     </tr>
   </tbody>
-</table>
+</table> -->

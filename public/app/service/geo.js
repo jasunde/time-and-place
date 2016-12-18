@@ -10,7 +10,6 @@ angular.module('reportApp')
 
     return $http.get('/geo', config)
       .then(function (response) {
-        console.log(response);
         data = response.data;
       })
       .catch(function (err) {

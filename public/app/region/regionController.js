@@ -51,6 +51,7 @@ angular.module('reportApp')
       ]
     }
   };
+  
 
   var color = d3.scaleThreshold()
     .domain(d3.range(2,10))
@@ -66,8 +67,8 @@ angular.module('reportApp')
   var mask = d3.select('mask');
 
   function groupBounds(paths) {
-    var topLeft = undefined;
-    var bottomRight = undefined;
+    var topLeft;
+    var bottomRight;
     var bounds = [];
     // TODO: Figure out why bounds aren't as expected
     paths.forEach(function (path) {
@@ -127,7 +128,7 @@ angular.module('reportApp')
     getMap(),
     getReports()
   ]).then(function (promiseHash) {
-    updateMap()
+    updateMap();
   });
 
   /**
@@ -184,7 +185,7 @@ angular.module('reportApp')
       ]).then(function (promiseHash) {
         console.log(promiseHash);
         updateMap();
-      })
+      });
     }
   }
 
@@ -207,7 +208,7 @@ angular.module('reportApp')
   $scope.heatIndex = heatIndex;
 
   function heatIndex(reports) {
-    var range = reportRate(reports)
+    var range = reportRate(reports);
     return 'heat' + range;
   }
 
@@ -221,8 +222,9 @@ angular.module('reportApp')
   }
 
   function getRegionType() {
+    var type;
     if($scope.regionPath.length) {
-      var type = $scope.subRegionHeirarchy[$scope.regionPath.length - 1];
+      type = $scope.subRegionHeirarchy[$scope.regionPath.length - 1];
     } else {
       type = 'city';
     }
@@ -252,7 +254,6 @@ angular.module('reportApp')
   }
 
   function getRegionColor(data) {
-
     return color(reportRate(d3Reports.get(data.properties.id)));
   }
 
@@ -260,16 +261,17 @@ angular.module('reportApp')
     var regionMaps = $scope.geoData[getRegionType()];
     return regionMaps.find(function (region) {
       return region.properties.id === id;
-    })
+    });
   }
 
   function updateMap() {
+    var parentRegion;
     var subRegion = getSubRegionType();
 
     var data = $scope.geoData[subRegion];
 
     if($scope.regionPath.length) {
-      var parentRegion = getRegionMap($scope.regionPath[$scope.regionPath.length - 1]);
+      parentRegion = getRegionMap($scope.regionPath[$scope.regionPath.length - 1]);
       projection.fitExtent([[m, m],[width - m, height - m]], parentRegion);
       path = d3.geoPath().projection(projection);
 
@@ -287,7 +289,7 @@ angular.module('reportApp')
       .enter().append('path')
           .on('click', function (d, i) { drillDown({
             region: d.properties.id
-          }) })
+          }); })
           .attr('fill', function(d) { return getRegionColor(d); })
           .attr('d', path)
       .exit().remove();
@@ -356,7 +358,7 @@ angular.module('reportApp')
     .then(function () {
       queryIdle = true;
       d3Reports.clear();
-      Reports.subRegions().forEach(function (d){ d3Reports.set(d.region, +d.reports)});
+      Reports.subRegions().forEach(function (d){ d3Reports.set(d.region, +d.reports); });
       $scope.reportData = Reports.subRegions();
       $scope.totalReports = Reports.total();
     });

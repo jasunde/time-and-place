@@ -3,7 +3,9 @@
 // requests that data from reports service
 
 angular.module('reportApp')
-.controller('RegionController', ['$scope', 'Reports', 'Geo', '$q', '$window', '$document', function ($scope, Reports, Geo, $q, $window, $document) {
+.controller('RegionController', 
+  ['$scope', 'Reports', 'Geo', '$q', '$window', '$document', 
+  function ($scope, Reports, Geo, $q, $window, $document) {
 
   /**
    * Globals for RegionController
@@ -23,6 +25,10 @@ angular.module('reportApp')
 
   var cityProjection = projection;
 
+  var t = d3.transition()
+      .duration(250)
+      .ease(d3.easeLinear);
+
   path = d3.geoPath().projection(cityProjection);
 
   $window.addEventListener('resize', function () {
@@ -41,31 +47,12 @@ angular.module('reportApp')
    */
   $scope.geoData = [];
 
-  console.log($window);
-
   var width = $window.innerWidth;
   var height = $window.innerHeight;
-  var cityBounds = {
-    type: 'Feature',
-    geometry: {
-      type: 'Polygon',
-      coordinates: [
-        [
-          [42.032719, -87.947080],
-          [42.032719, -87.516810],
-          [41.639781, -87.516810],
-          [41.639781, -87.947080],
-          [42.032719, -87.947080]
-        ]
-      ]
-    }
-  };
-  
 
   var color = d3.scaleThreshold()
     .domain(d3.range(2,10))
     .range(d3.schemeBlues[9]);
-
 
   svg = d3.select('svg')
     .attr('width', width)
@@ -204,7 +191,7 @@ angular.module('reportApp')
         getReports()
       ]).then(function (promiseHash) {
         console.log(promiseHash);
-        updateMap();
+        updateMap(true);
       });
     }
   }
@@ -218,7 +205,7 @@ angular.module('reportApp')
         getReports()
       ]).then(function (promiseHash) {
         console.log(promiseHash);
-        updateMap();
+        updateMap(true);
       });
     }
   };
@@ -306,12 +293,15 @@ angular.module('reportApp')
     });
   }
 
-  /**
+  /*
    * Update the map with the current state
+   *
+   * @param {boolean} mapChange True for change in map region
    */
-  function updateMap() {
+  function updateMap(mapChange) {
     var parentRegion;
     var subRegion = getSubRegionType();
+    var region = getRegionType();
 
     var data = $scope.geoData[subRegion];
 
@@ -327,33 +317,44 @@ angular.module('reportApp')
       path = d3.geoPath().projection(projection);
     }
 
-    chart.selectAll('path').remove();
-    chart.selectAll('path')
-      .data(data)
+    if(mapChange) {
+      chart.selectAll('path').remove();
+    }
+    var maps = chart.selectAll('path')
+      .data(data);
+
+    // Update
+    maps
+      .transition(t)
         .attr('fill', function(d) { return getRegionColor(d); })
+        .attr('d', path);
+
+    // Enter
+    maps
       .enter().append('path')
           .on('click', function (d, i) { drillDown({
             region: d.properties.id
           }); })
+          .attr('opacity', 0)
+        .transition(t)
           .attr('fill', function(d) { return getRegionColor(d); })
           .attr('d', path)
-      .exit().remove();
+          .attr('opacity', 1);
+
+    // Exit
+    maps
+      .exit()
+      .transition(t)
+        .attr('opacity', 0)
+      .remove();
 
     mask.selectAll('path').remove();
 
-    if($scope.regionPath.length) {
-      mask.selectAll('path')
-      .data([parentRegion])
-      .enter().append('path')
-      .attr('fill', '#ffffff')
-      .attr('d', path);
-    } else {
-      mask.selectAll('path')
-      .data([parentRegion])
-      .enter().append('path')
-      .attr('fill', '#ffffff')
-      .attr('d', path);
-    }
+    mask.selectAll('path')
+    .data([parentRegion])
+    .enter().append('path')
+    .attr('fill', '#ffffff')
+    .attr('d', path);
   }
 
   /**

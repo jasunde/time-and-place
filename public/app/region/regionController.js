@@ -8,13 +8,22 @@ angular.module('reportApp')
   /**
    * Globals for RegionController
    */
-  var path,
-      cityProjection,
-      projection,
-      d3Reports = d3.map(),
+  var d3Reports = d3.map(),
+      path = d3.geoPath(),
       // map margin
       m = 20,
       svg;
+
+  var projection = d3.geoConicEqualArea()
+      .parallels([41.644073, 42.023683])
+      .scale(70000)
+      .translate([width/2,height/2])
+      .rotate([87.73212559411209, 0])
+      .center([0, 41.84449380686466]);
+
+  var cityProjection = projection;
+
+  path = d3.geoPath().projection(cityProjection);
 
   $window.addEventListener('resize', function () {
     width = $window.innerWidth;
@@ -66,6 +75,12 @@ angular.module('reportApp')
 
   var mask = d3.select('mask');
 
+  /**
+   * Find the total outer bounds of an array of geoJSON features
+   *
+   * @param {array} paths geoJSON features
+   * @returns {geoJSON} geoJSON feature describing outer bounds of the array of features
+   */
   function groupBounds(paths) {
     var topLeft;
     var bottomRight;
@@ -176,6 +191,11 @@ angular.module('reportApp')
   // Access sub-regions of a sub-region
   $scope.drillDown = drillDown;
 
+  /**
+   * Move down to one region finer granularity of data
+   *
+   * @param {object} region Region with id and number of reports
+   */
   function drillDown(region) {
     if(($scope.subRegionHeirarchy.length - 1) > $scope.regionPath.length && queryIdle) {
       $scope.regionPath.push(region.region);
@@ -217,10 +237,20 @@ angular.module('reportApp')
     return Math.ceil( (((reports - Reports.min() + 1) / Reports.max()) ) * 10 );
   }
 
+  /**
+   * Get the current sub-region type
+   *
+   * @returns {undefined}
+   */
   function getSubRegionType() {
     return $scope.subRegionHeirarchy[$scope.regionPath.length];
   }
 
+  /**
+   * Get the current region type
+   *
+   * @returns {String}
+   */
   function getRegionType() {
     var type;
     if($scope.regionPath.length) {
@@ -253,10 +283,22 @@ angular.module('reportApp')
     return query;
   }
 
-  function getRegionColor(data) {
-    return color(reportRate(d3Reports.get(data.properties.id)));
+  /**
+   * Return the color for a region
+   *
+   * @param region
+   * @returns {String}
+   */
+  function getRegionColor(region) {
+    return color(reportRate(d3Reports.get(region.properties.id)));
   }
 
+  /**
+   * Get the geoJSON for the current parent region
+   *
+   * @param {string} id id of the current parent region
+   * @returns {geoJSON} geoJSON for current parent region
+   */
   function getRegionMap(id) {
     var regionMaps = $scope.geoData[getRegionType()];
     return regionMaps.find(function (region) {
@@ -264,6 +306,9 @@ angular.module('reportApp')
     });
   }
 
+  /**
+   * Update the map with the current state
+   */
   function updateMap() {
     var parentRegion;
     var subRegion = getSubRegionType();
@@ -311,6 +356,10 @@ angular.module('reportApp')
     }
   }
 
+  /**
+   * Get the geoJSON for the current state
+   *
+   */
   function getMap() {
     var type = 'city',
         regionId = 0;
@@ -327,20 +376,7 @@ angular.module('reportApp')
 
     return Geo.subRegions(query)
     .then(function (data) {
-
       $scope.geoData[getSubRegionType()] = Geo.data();
-      path = d3.geoPath();
-
-      projection = d3.geoConicEqualArea()
-      .parallels([41.644073, 42.023683])
-      .scale(70000)
-      .translate([width/2,height/2])
-      .rotate([87.73212559411209, 0])
-      .center([0, 41.84449380686466]);
-
-      cityProjection = projection;
-
-      path = d3.geoPath().projection(cityProjection);
     });
   }
 

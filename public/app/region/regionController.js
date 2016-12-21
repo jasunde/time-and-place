@@ -14,7 +14,10 @@ angular.module('reportApp')
       path = d3.geoPath(),
       // map margin
       m = 20,
-      svg;
+      svg,
+      width, height;
+
+  svgDimensions();
 
   var projection = d3.geoConicEqualArea()
       .parallels([41.644073, 42.023683])
@@ -23,18 +26,19 @@ angular.module('reportApp')
       .rotate([87.73212559411209, 0])
       .center([0, 41.84449380686466]);
 
-  var cityProjection = projection;
+  function svgDimensions() {
+    controlHeight = document.querySelector('.report-controls').clientHeight;
+    console.log('controlHeight', controlHeight);
+    width = $window.innerWidth;
+    height = $window.innerHeight - controlHeight;
+  }
 
   var t = d3.transition()
       .duration(250)
       .ease(d3.easeLinear);
 
-  path = d3.geoPath().projection(cityProjection);
-
   $window.addEventListener('resize', function () {
-    width = $window.innerWidth;
-    height = $window.innerHeight;
-
+    svgDimensions();
     svg = d3.select('svg')
     .attr('width', width)
     .attr('height', height);
@@ -46,9 +50,6 @@ angular.module('reportApp')
    * GeoPaths using svg
    */
   $scope.geoData = [];
-
-  var width = $window.innerWidth;
-  var height = $window.innerHeight;
 
   var color = d3.scaleThreshold()
     .domain(d3.range(2,10))
@@ -122,8 +123,19 @@ angular.module('reportApp')
   $scope.reportData = [];
   $scope.colOrder = '';
   $scope.totalReports = 0;
-  $scope.startDate = new Date($scope.timeFrame.startMoment);
+  $scope.startDate = +$scope.timeFrame.startMoment;
+  $scope.minDate = +moment('2001-01-01');
+  $scope.maxDate = +moment();
+  $scope.dateStep = duration.as('milliseconds');
+  // $scope.numDate = 1479679234260;
+  // $scope.numDate = 149;
+  // $scope.minDate = 50;
+  // $scope.maxDate = 150;
   $scope.timeSpan = 'month';
+
+  console.log('minDate', $scope.minDate);
+  console.log('numDate', $scope.numDate);
+  console.log('maxDate', $scope.maxDate);
 
   // Initial getReports
   $q.all([
@@ -138,6 +150,7 @@ angular.module('reportApp')
    */
   // Change date with input
   $scope.changeStartDate = function () {
+    console.log('changeStartDate');
     $scope.timeFrame.startMoment = moment($scope.startDate);
     $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(duration);
     getReports().then(function () {
@@ -145,11 +158,16 @@ angular.module('reportApp')
     });
   };
 
+  $scope.changeStart = function () {
+    console.log($scope.numDate);
+  };
+
   // Change time span with radio buttons
   $scope.changeTimeSpan = function () {
     duration = moment.duration(1, $scope.timeSpan);
     $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(duration);
     $scope.endDate = new Date($scope.timeFrame.endDate);
+    $scope.dateStep = duration.as('milliseconds');
     getReports().then(function () {
       updateMap();
     });
@@ -222,6 +240,13 @@ angular.module('reportApp')
   // TODO: something is wrong with reportRate...
   function reportRate(reports) {
     return Math.ceil( (((reports - Reports.min() + 1) / Reports.max()) ) * 10 );
+  }
+
+  function datePercentage(startDate) {
+    var begin = moment('2001-01-01');
+    var percent = (+startDate - +begin) / (+moment() - +begin);
+    console.log(percent, $scope.maxDate);
+    return Math.floor(percent * $scope.maxDate);
   }
 
   /**
@@ -304,6 +329,8 @@ angular.module('reportApp')
     var region = getRegionType();
 
     var data = $scope.geoData[subRegion];
+
+    console.log('width, height', width, height);
 
     if($scope.regionPath.length) {
       parentRegion = getRegionMap($scope.regionPath[$scope.regionPath.length - 1]);

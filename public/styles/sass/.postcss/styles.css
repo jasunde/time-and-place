@@ -14,13 +14,10 @@ body {
   font-size: 1.5em;
   position: relative;
   top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%); }
+  transform: translateY(-50%); }
 
 input[type="range"] {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
   background-color: transparent;
   width: 100%;
   padding: 0; }
@@ -38,8 +35,7 @@ input[type="range"] {
   input[type="range"]:focus {
     outline: none; }
   input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-            appearance: none; }
+    appearance: none; }
   input[type="range"]::-moz-range-thumb {
     border: none;
     border-radius: 0;

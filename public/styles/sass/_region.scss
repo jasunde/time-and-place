@@ -1,0 +1,20 @@
+body {
+  background-color: #444;
+  color: #fff;
+}
+
+.region {
+  float: left;
+  height: 100px;
+  position: relative;
+  text-align: center;
+  width: 100px;
+}
+
+.reports {
+  color: gainsboro;
+  font-size: 1.5em;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}

@@ -1,4 +1,4 @@
-angular.module('reportApp', ['ngRoute'])
+angular.module('reportApp', ['ngRoute', 'ui.bootstrap'])
 .config(function ($routeProvider) {
   $routeProvider
   .when('/region', {

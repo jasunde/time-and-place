@@ -18,7 +18,6 @@ angular.module('reportApp')
       scope.$watchGroup(theAttrs, setValues);
 
       function setValues(args) {
-        console.log('args', args);
         if(areDefined(theAttrs)) {
           theAttrs.forEach(function (attr, i) {
             element.attr(attr, args[i]);

@@ -1,0 +1,9 @@
+{
+  "use": ["autoprefixer"],
+  "input": ["public/styles/sass/.postcss/**/*.css"],
+  "dir": "public/styles",
+  "local-plugins": true,
+  "autoprefixer": {
+    "browsers": "> 2%"
+  }
+}

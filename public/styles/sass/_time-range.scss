@@ -1,0 +1,84 @@
+// reset chrome, safari, firefox, and ie range inputs
+input[type="range"] {
+  appearance: none;
+  background-color: transparent;
+  width: 100%;
+  padding: 0;
+
+  // range track //
+  &::-moz-range-track {
+    background: transparent;
+    height: 5px;
+  }
+
+  &::-ms-track {
+    width: 100%;
+    cursor: pointer;
+    background: transparent; 
+    border-color: transparent;
+    color: transparent;
+  } 
+
+  &::-moz-focus-outer {
+    border: 0;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+
+  // range thumb //
+  &::-webkit-slider-thumb {
+    appearance: none;
+  }
+
+  &::-moz-range-thumb {
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+  }
+}
+
+
+@mixin thumb {
+  background-color: #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: -7px;
+  height: 16px;
+  width: 16px;
+}
+
+@mixin track {
+  background-color: #ffffff;
+  height: 2px;
+}
+
+// add custom styles 
+input[type=range] {
+  // thumb //
+  // thumb styling doesn't work with grouped selectors
+  &::-webkit-slider-thumb {
+    @include thumb;
+  }
+
+  &::-moz-range-thumb {
+    @include thumb;
+  }
+
+  &::-ms-thumb {
+    @include thumb;
+  }
+
+  // track //
+  &::-webkit-slider-runnable-track {
+    @include track;
+  }
+
+  &::-moz-range-track {
+    @include track;
+  }
+}
+
+

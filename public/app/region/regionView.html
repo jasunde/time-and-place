@@ -28,36 +28,41 @@
 
       <form>
         <div class="form-group">
-        <label>Start Date:
-          <!-- <input type="date" ng-change="changeStartDate()" ng-model="startDate" /></label> -->
-        <date-input class="form-control" min="minDate" max="maxDate" step="dateStep" value="startDate" on-change="changeStartDate()"></date-input>
-        </label>
+          <!-- <label>Start Date: </label> -->
+          <date-input class="start-date" min="minDate" max="maxDate" step="dateStep" value="startDate" on-change="changeStartDate()"></date-input>
         </div>
-        <label>Time Span:</label>
-        <label>
-          <input type="radio" ng-model="timeSpan" value="day" ng-change="changeTimeSpan()" />
-          Day
-        </label>
-        <label>
-          <input type="radio" ng-model="timeSpan" value="week" ng-change="changeTimeSpan()" />
-          Week
-        </label>
-        <label>
-          <input type="radio" ng-model="timeSpan" value="month" ng-change="changeTimeSpan()" />
-          Month
-        </label>
+
+        <!-- <label>Time Span:</label> -->
+        <!-- <label> -->
+        <!--   <input type="radio" ng-model="timeSpan" value="day" ng-change="changeTimeSpan()" /> -->
+        <!--   Day -->
+        <!-- </label> -->
+        <!-- <label> -->
+        <!--   <input type="radio" ng-model="timeSpan" value="week" ng-change="changeTimeSpan()" /> -->
+        <!--   Week -->
+        <!-- </label> -->
+        <!-- <label> -->
+        <!--   <input type="radio" ng-model="timeSpan" value="month" ng-change="changeTimeSpan()" /> -->
+        <!--   Month -->
+        <!-- </label> -->
+
+        <div class="btn-group">
+          <label class="btn btn-primary" ng-model="timeSpan" uib-btn-radio="'day'">Day</label>
+          <label class="btn btn-primary" ng-model="timeSpan" uib-btn-radio="'week'">Week</label>
+          <label class="btn btn-primary" ng-model="timeSpan" uib-btn-radio="'month'">Month</label>
+        </div>
       </form>
     </div>
-      </div>
+  </div>
 </div>
 
-      <!-- Map -->
-      <svg>
-        <defs>
-        <mask id="mask"></mask>
-        </defs>
-        <g class="chart" mask="url(#mask)"></g>
-      </svg>
+<!-- Map -->
+<svg>
+  <defs>
+  <mask id="mask"></mask>
+  </defs>
+  <g class="chart" mask="url(#mask)"></g>
+</svg>
 
 <!-- <br/> -->
 

@@ -17,7 +17,6 @@ angular.module('reportApp')
       svg,
       width, height;
 
-  svgDimensions();
 
   var projection = d3.geoConicEqualArea()
       .parallels([41.644073, 42.023683])
@@ -28,9 +27,12 @@ angular.module('reportApp')
 
   function svgDimensions() {
     controlHeight = document.querySelector('.report-controls').clientHeight;
-    console.log('controlHeight', controlHeight);
     width = $window.innerWidth;
     height = $window.innerHeight - controlHeight;
+
+    svg = d3.select('svg')
+      .attr('width', width)
+      .attr('height', height);
   }
 
   var t = d3.transition()
@@ -39,9 +41,6 @@ angular.module('reportApp')
 
   $window.addEventListener('resize', function () {
     svgDimensions();
-    svg = d3.select('svg')
-    .attr('width', width)
-    .attr('height', height);
 
     updateMap();
   });
@@ -54,10 +53,6 @@ angular.module('reportApp')
   var color = d3.scaleThreshold()
     .domain(d3.range(2,10))
     .range(d3.schemeBlues[9]);
-
-  svg = d3.select('svg')
-    .attr('width', width)
-    .attr('height', height);
 
   var chart = d3.select('.chart');
 
@@ -133,10 +128,6 @@ angular.module('reportApp')
   // $scope.maxDate = 150;
   $scope.timeSpan = 'month';
 
-  console.log('minDate', $scope.minDate);
-  console.log('numDate', $scope.numDate);
-  console.log('maxDate', $scope.maxDate);
-
   // Initial getReports
   $q.all([
     getMap(),
@@ -149,21 +140,21 @@ angular.module('reportApp')
    * Methods bound to $scope
    */
   // Change date with input
-  $scope.changeStartDate = function () {
-    console.log('changeStartDate');
+  $scope.changeStartDate = function() {
     $scope.timeFrame.startMoment = moment($scope.startDate);
     $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(duration);
     getReports().then(function () {
       updateMap();
     });
-  };
+  }
 
   $scope.changeStart = function () {
     console.log($scope.numDate);
   };
 
   // Change time span with radio buttons
-  $scope.changeTimeSpan = function () {
+  $scope.$watch('timeSpan', changeTimeSpan);
+  function changeTimeSpan() {
     duration = moment.duration(1, $scope.timeSpan);
     $scope.timeFrame.endMoment = $scope.timeFrame.startMoment.clone().add(duration);
     $scope.endDate = new Date($scope.timeFrame.endDate);
@@ -208,7 +199,6 @@ angular.module('reportApp')
         getMap(),
         getReports()
       ]).then(function (promiseHash) {
-        console.log(promiseHash);
         updateMap(true);
       });
     }
@@ -222,7 +212,6 @@ angular.module('reportApp')
         getMap(),
         getReports()
       ]).then(function (promiseHash) {
-        console.log(promiseHash);
         updateMap(true);
       });
     }
@@ -330,8 +319,6 @@ angular.module('reportApp')
 
     var data = $scope.geoData[subRegion];
 
-    console.log('width, height', width, height);
-
     if($scope.regionPath.length) {
       parentRegion = getRegionMap($scope.regionPath[$scope.regionPath.length - 1]);
       projection.fitExtent([[m, m],[width - m, height - m]], parentRegion);
@@ -405,6 +392,7 @@ angular.module('reportApp')
     return Geo.subRegions(query)
     .then(function (data) {
       $scope.geoData[getSubRegionType()] = Geo.data();
+      svgDimensions();
     });
   }
 

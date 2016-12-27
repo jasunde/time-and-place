@@ -64,9 +64,13 @@ input[type=range]::-ms-thumb {
   width: 16px; }
 input[type=range]::-webkit-slider-runnable-track {
   background-color: #ffffff;
-  height: 2px; }
+  height: 2px;
+  margin-bottom: 7px;
+  margin-top: 7px; }
 input[type=range]::-moz-range-track {
   background-color: #ffffff;
-  height: 2px; }
+  height: 2px;
+  margin-bottom: 7px;
+  margin-top: 7px; }
 
 /*# sourceMappingURL=styles.css.map */

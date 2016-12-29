@@ -14,7 +14,8 @@ angular.module('reportApp')
       path = d3.geoPath(),
       // map margin
       m = 20,
-      svg,
+      mapTop,
+      map,
       width, height;
 
 
@@ -25,12 +26,13 @@ angular.module('reportApp')
       .rotate([87.73212559411209, 0])
       .center([0, 41.84449380686466]);
 
-  function svgDimensions() {
-    controlHeight = document.querySelector('.report-controls').clientHeight;
-    width = $window.innerWidth;
-    height = $window.innerHeight - controlHeight;
+  function mapDimensions() {
+    // mapTop = document.querySelector('.map-controls').clientHeight;
+    mapTop = m;
+    width = document.querySelector('.report-map').clientWidth;
+    height = $window.innerHeight;
 
-    svg = d3.select('svg')
+    map = d3.select('#map')
       .attr('width', width)
       .attr('height', height);
   }
@@ -40,7 +42,7 @@ angular.module('reportApp')
       .ease(d3.easeLinear);
 
   $window.addEventListener('resize', function () {
-    svgDimensions();
+    mapDimensions();
 
     updateMap();
   });
@@ -122,11 +124,17 @@ angular.module('reportApp')
   $scope.minDate = +moment('2001-01-01');
   $scope.maxDate = +moment();
   $scope.dateStep = duration.as('milliseconds');
-  // $scope.numDate = 1479679234260;
-  // $scope.numDate = 149;
-  // $scope.minDate = 50;
-  // $scope.maxDate = 150;
   $scope.timeSpan = 'month';
+  $scope.years = [];
+
+  for (var i = 2001, year = moment().year(); i <= year; i++) {
+    var milliseconds = +moment(i + '-01-01');
+    $scope.years.push({
+      number: i,
+      milliseconds: milliseconds
+    });
+  }
+    console.log('years', $scope.years);
 
   // Initial getReports
   $q.all([
@@ -321,15 +329,12 @@ angular.module('reportApp')
 
     if($scope.regionPath.length) {
       parentRegion = getRegionMap($scope.regionPath[$scope.regionPath.length - 1]);
-      projection.fitExtent([[m, m],[width - m, height - m]], parentRegion);
-      path = d3.geoPath().projection(projection);
-
     } else {
       parentRegion = groupBounds(data);
-
-      projection.fitExtent([[m, m],[width - m, height - m]], parentRegion);
-      path = d3.geoPath().projection(projection);
     }
+
+    projection.fitExtent([[m, mapTop],[width - m, height - m]], parentRegion);
+    path = d3.geoPath().projection(projection);
 
     if(mapChange) {
       chart.selectAll('path').remove();
@@ -392,7 +397,7 @@ angular.module('reportApp')
     return Geo.subRegions(query)
     .then(function (data) {
       $scope.geoData[getSubRegionType()] = Geo.data();
-      svgDimensions();
+      mapDimensions();
     });
   }
 

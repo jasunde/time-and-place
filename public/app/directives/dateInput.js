@@ -1,8 +1,9 @@
 angular.module('reportApp')
 .directive('dateInput', function () {
   return {
-    replace: true,
-    template: '<input type="range" />',
+    replace: false,
+    // template: '<input type="range" />',
+    templateUrl: 'app/directives/dateInput.html',
     restrict: 'E',
     // transclude: true,
     scope: {
@@ -10,17 +11,49 @@ angular.module('reportApp')
       min: '=',
       step: '=',
       value: '=',
-      change: '&onChange'
+      change: '&onChange',
+      class: '='
     },
     link: function (scope, element, attrs, controllers) {
-      var theAttrs = ['max', 'min', 'step', 'value'];
+      var theAttrs = ['max', 'min', 'step', 'value', 'class'];
+      var input = element.find('input');
+      var svg = d3.select('svg');
+      var div = element.find('div');
+
+      var timeLine = d3.scaleTime().domain([new Date(2001, 0, 1, 0), new Date()]);
+
+      inputDimensions();
+      drawTrack();
+
+      function inputDimensions() {
+        svg.attr('width', input[0].clientWidth - input[0].clientHeight);
+        svg.attr('height', input[0].clientHeight * 2);
+        timeLine
+          .range([0,svg.attr('width')])
+          .tickFormat(d3.timeYear.every(1), d3.timeFormat("%Y"));
+          // .tickFormat(d3.timeFormat("%Y"));
+      }
+
+      function drawTrack() {
+        var axis = d3.axisBottom(timeLine);
+        svg.append('g')
+        .attr('class', 'time-scale')
+        .attr('transform', 'translate('+input[0].clientHeight / 2+','+input[0].clientHeight / 2+')')
+        .call(axis);
+      }
+
+      window.addEventListener('resize', inputDimensions);
 
       scope.$watchGroup(theAttrs, setValues);
 
       function setValues(args) {
         if(areDefined(theAttrs)) {
           theAttrs.forEach(function (attr, i) {
-            element.attr(attr, args[i]);
+            input.attr(attr, args[i]);
+            if(attr === 'class') {
+              svg.attr(attr, args[i]);
+              div.attr(attr, args[i]);
+            }
           });
         }
       }
@@ -32,10 +65,10 @@ angular.module('reportApp')
       }
 
       function read() {
-        scope.value = parseInt(element.val());
+        scope.value = parseInt(input.val());
       }
 
-      element.on('change', function() {
+      input.on('change', function() {
         scope.$apply(read);
         scope.change();
       });

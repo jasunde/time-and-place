@@ -1,6 +1,6 @@
-<div class="report-controls container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="report-info col-xs-12 col-sm-4">
       <h2>Time and Place <small>Crime Reports in Chicago</small></h2>
 
       <ul class="breadcrumb">
@@ -26,63 +26,51 @@
       <h3>{{timeFrame.startMoment.format(dateFormat)}} - {{timeFrame.endMoment.format(dateFormat)}} <small>Total Reports: {{totalReports}}</small>
       </h3>
 
-      <form>
-        <div class="form-group">
-          <!-- <label>Start Date: </label> -->
-          <date-input class="start-date" min="minDate" max="maxDate" step="dateStep" value="startDate" on-change="changeStartDate()"></date-input>
-        </div>
-
-        <!-- <label>Time Span:</label> -->
-        <!-- <label> -->
-        <!--   <input type="radio" ng-model="timeSpan" value="day" ng-change="changeTimeSpan()" /> -->
-        <!--   Day -->
-        <!-- </label> -->
-        <!-- <label> -->
-        <!--   <input type="radio" ng-model="timeSpan" value="week" ng-change="changeTimeSpan()" /> -->
-        <!--   Week -->
-        <!-- </label> -->
-        <!-- <label> -->
-        <!--   <input type="radio" ng-model="timeSpan" value="month" ng-change="changeTimeSpan()" /> -->
-        <!--   Month -->
-        <!-- </label> -->
-
+      <form class="map-controls">
         <div class="btn-group">
           <label class="btn btn-primary" ng-model="timeSpan" uib-btn-radio="'day'">Day</label>
           <label class="btn btn-primary" ng-model="timeSpan" uib-btn-radio="'week'">Week</label>
           <label class="btn btn-primary" ng-model="timeSpan" uib-btn-radio="'month'">Month</label>
         </div>
+        <div class="form-group">
+          <!-- <label>Start Date: </label> -->
+          <date-input class="'start-date'" min="minDate" max="maxDate" step="dateStep" value="startDate" on-change="changeStartDate()"></date-input>
+        </div>
+
       </form>
     </div>
+
+    <!-- Map -->
+    <div class="report-map col-xs-12 col-sm-8">
+
+      <svg id="map">
+        <defs>
+        <mask id="mask"></mask>
+        </defs>
+        <g class="chart" mask="url(#mask)"></g>
+      </svg>
+    </div>
   </div>
+  <!-- <br/> -->
+
+  <!-- Heat color blocks -->
+  <!-- <div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in reportData" ng-click="drillDown(region)"> -->
+  <!--   <div class="reports">{{region.reports}}</div> -->
+  <!--   {{region.region}} -->
+  <!-- </div> -->
+
+  <!-- <table class="table"> -->
+  <!--   <thead> -->
+  <!--     <tr> -->
+  <!--       <th ng-click="setOrder('reports')">Reports</th> -->
+  <!--       <th ng-click="setOrder('region')">Region</th> -->
+  <!--     </tr> -->
+  <!--   </thead> -->
+  <!--   <tbody> -->
+  <!--     <tr ng-repeat="row in reportData | orderBy: colOrder"> -->
+  <!--       <td>{{row.reports}}</td> -->
+  <!--       <td>{{row.region}}</td> -->
+  <!--     </tr> -->
+  <!--   </tbody> -->
+  <!-- </table> -->
 </div>
-
-<!-- Map -->
-<svg>
-  <defs>
-  <mask id="mask"></mask>
-  </defs>
-  <g class="chart" mask="url(#mask)"></g>
-</svg>
-
-<!-- <br/> -->
-
-<!-- Heat color blocks -->
-<!-- <div ng-class="heatIndex(region.reports)" class="region" ng-repeat="region in reportData" ng-click="drillDown(region)"> -->
-<!--   <div class="reports">{{region.reports}}</div> -->
-<!--   {{region.region}} -->
-<!-- </div> -->
-
-<!-- <table class="table"> -->
-<!--   <thead> -->
-<!--     <tr> -->
-<!--       <th ng-click="setOrder('reports')">Reports</th> -->
-<!--       <th ng-click="setOrder('region')">Region</th> -->
-<!--     </tr> -->
-<!--   </thead> -->
-<!--   <tbody> -->
-<!--     <tr ng-repeat="row in reportData | orderBy: colOrder"> -->
-<!--       <td>{{row.reports}}</td> -->
-<!--       <td>{{row.region}}</td> -->
-<!--     </tr> -->
-<!--   </tbody> -->
-<!-- </table> -->

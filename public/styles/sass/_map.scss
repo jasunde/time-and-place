@@ -1,0 +1,14 @@
+.report-map {
+  position: relative;
+}
+
+form {
+  position: relative;
+  z-index: 10;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

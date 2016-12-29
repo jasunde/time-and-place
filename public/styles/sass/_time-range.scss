@@ -45,13 +45,14 @@ input[type="range"] {
   background-color: #ffffff;
   border-radius: 50%;
   cursor: pointer;
-  margin: -7px;
+  margin-right: -4px;
+  margin-top: -7px;
   height: 16px;
   width: 16px;
 }
 
 @mixin track {
-  background-color: #ffffff;
+  // background-color: #ffffff;
   height: 2px;
   margin-bottom: 7px;
   margin-top: 7px;
@@ -83,4 +84,30 @@ input[type=range] {
   }
 }
 
+div.start-date {
+  position: relative;
+}
+
+svg.start-date {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -10;
+}
+
+.time-scale {
+  path {
+    stroke: #fff;
+  }
+
+  .tick {
+    line {
+      stroke: #fff;
+    }
+
+    text {
+      fill: #fff;
+    }
+  }
+}
 

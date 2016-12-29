@@ -45,32 +45,61 @@ input[type=range]::-webkit-slider-thumb {
   background-color: #ffffff;
   border-radius: 50%;
   cursor: pointer;
-  margin: -7px;
+  margin-right: -4px;
+  margin-top: -7px;
   height: 16px;
   width: 16px; }
 input[type=range]::-moz-range-thumb {
   background-color: #ffffff;
   border-radius: 50%;
   cursor: pointer;
-  margin: -7px;
+  margin-right: -4px;
+  margin-top: -7px;
   height: 16px;
   width: 16px; }
 input[type=range]::-ms-thumb {
   background-color: #ffffff;
   border-radius: 50%;
   cursor: pointer;
-  margin: -7px;
+  margin-right: -4px;
+  margin-top: -7px;
   height: 16px;
   width: 16px; }
 input[type=range]::-webkit-slider-runnable-track {
-  background-color: #ffffff;
   height: 2px;
   margin-bottom: 7px;
   margin-top: 7px; }
 input[type=range]::-moz-range-track {
-  background-color: #ffffff;
   height: 2px;
   margin-bottom: 7px;
   margin-top: 7px; }
+
+div.start-date {
+  position: relative; }
+
+svg.start-date {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -10; }
+
+.time-scale path {
+  stroke: #fff; }
+.time-scale .tick line {
+  stroke: #fff; }
+.time-scale .tick text {
+  fill: #fff; }
+
+.report-map {
+  position: relative; }
+
+form {
+  position: relative;
+  z-index: 10; }
+
+#map {
+  position: absolute;
+  top: 0;
+  left: 0; }
 
 /*# sourceMappingURL=styles.css.map */

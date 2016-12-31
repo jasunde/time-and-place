@@ -31,10 +31,6 @@
           <label class="btn btn-primary" ng-model="timeSpan" uib-btn-radio="'week'">Week</label>
           <label class="btn btn-primary" ng-model="timeSpan" uib-btn-radio="'month'">Month</label>
         </div>
-        <div class="form-group">
-          <!-- <label>Start Date: </label> -->
-          <date-input class="'start-date'" min="minDate" max="maxDate" step="dateStep" value="startDate" on-change="changeStartDate()"></date-input>
-        </div>
 
       </form>
 
@@ -49,6 +45,10 @@
         </defs>
         <g class="chart" mask="url(#mask)"></g>
       </svg>
+      <div class="form-group date-input">
+        <!-- <label>Start Date: </label> -->
+        <date-input class="'start-date'" min="minDate" max="maxDate" step="dateStep" value="startDate" on-change="changeStartDate()"></date-input>
+      </div>
     </div>
   </div>
   <!-- <br/> -->

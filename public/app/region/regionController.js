@@ -15,6 +15,8 @@ angular.module('reportApp')
       // map margin
       m = 20,
       mapTop,
+      mapRight = 75,
+			mapBottom = 32,
       map,
       width, height;
 
@@ -323,7 +325,7 @@ angular.module('reportApp')
 
     map.append('g')
       .attr('class', 'color-legend')
-      .attr('transform', 'translate('+ (map.attr("width") - 75)+', 0)')
+      .attr('transform', 'translate('+ (map.attr("width") - mapRight)+', 0)')
       .call(axis);
 
     d3.selectAll('#colorLegend').remove();
@@ -381,7 +383,7 @@ angular.module('reportApp')
       parentRegion = groupBounds(data);
     }
 
-    projection.fitExtent([[m, mapTop],[width - m, height - m]], parentRegion);
+    projection.fitExtent([[m, mapTop],[width - mapRight - m, height - mapBottom - m]], parentRegion);
     path = d3.geoPath().projection(projection);
 
     if(mapChange) {

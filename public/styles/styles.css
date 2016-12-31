@@ -81,6 +81,11 @@ input[type=range]::-moz-range-track {
 div.start-date {
   position: relative; }
 
+.date-input {
+  position: absolute;
+  bottom: 0;
+  width: 95%; }
+
 svg.start-date {
   position: absolute;
   top: 0;
@@ -101,7 +106,8 @@ svg.start-date {
   display: none; }
 
 .report-map {
-  position: relative; }
+  position: relative;
+  height: 100vh; }
 
 form {
   position: relative;

@@ -17,13 +17,14 @@ angular.module('reportApp')
     link: function (scope, element, attrs, controllers) {
       var theAttrs = ['max', 'min', 'step', 'value', 'class'];
       var input = element.find('input');
-      var svg = d3.select('svg');
+			console.log('input', input);
+			var d3El = d3.select(element[0]);
+      var svg = d3El.select('svg');
       var div = element.find('div');
 
       var timeLine = d3.scaleTime().domain([new Date(2001, 0, 1, 0), new Date()]);
 
       inputDimensions();
-      drawTrack();
 
       function inputDimensions() {
         svg.attr('width', input[0].clientWidth - input[0].clientHeight);
@@ -32,10 +33,13 @@ angular.module('reportApp')
           .range([0,svg.attr('width')])
           .tickFormat(d3.timeYear.every(1), d3.timeFormat("%Y"));
           // .tickFormat(d3.timeFormat("%Y"));
+				drawTrack();
       }
 
       function drawTrack() {
         var axis = d3.axisBottom(timeLine);
+				svg.select('.time-scale').remove();
+
         svg.append('g')
         .attr('class', 'time-scale')
         .attr('transform', 'translate('+input[0].clientHeight / 2+','+input[0].clientHeight / 2+')')

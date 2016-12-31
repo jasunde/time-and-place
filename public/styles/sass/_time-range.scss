@@ -95,19 +95,22 @@ svg.start-date {
   z-index: -10;
 }
 
-.time-scale {
+.time-scale,
+.color-legend {
   path {
     stroke: #fff;
   }
 
-  .tick {
-    line {
-      stroke: #fff;
-    }
-
-    text {
-      fill: #fff;
-    }
+  line {
+    stroke: #fff;
   }
+
+  text {
+    fill: #fff;
+  }
+}
+
+.color-legend .domain {
+  display: none;
 }
 

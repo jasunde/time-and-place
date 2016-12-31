@@ -52,9 +52,7 @@ angular.module('reportApp')
    */
   $scope.geoData = [];
 
-  var color = d3.scaleThreshold()
-    .domain(d3.range(2,10))
-    .range(d3.schemeBlues[9]);
+  var color = d3.scaleSequential(d3.interpolateBlues);
 
   var chart = d3.select('.chart');
 
@@ -234,9 +232,8 @@ angular.module('reportApp')
     return 'heat' + range;
   }
 
-  // TODO: something is wrong with reportRate...
   function reportRate(reports) {
-    return Math.ceil( (((reports - Reports.min() + 1) / Reports.max()) ) * 10 );
+    return  Math.ceil((reports - Reports.min()) / (Reports.max() - Reports.min()) * 10);
   }
 
   function datePercentage(startDate) {
@@ -299,7 +296,7 @@ angular.module('reportApp')
    * @returns {String}
    */
   function getRegionColor(region) {
-    return color(reportRate(d3Reports.get(region.properties.id)));
+    return color(d3Reports.get(region.properties.id));
   }
 
   /**
@@ -313,6 +310,57 @@ angular.module('reportApp')
     return regionMaps.find(function (region) {
       return region.properties.id === id;
     });
+  }
+
+  function drawColorLegend() {
+    var scale = d3.scaleLinear()
+      .domain([Reports.min(), Reports.max()])
+      .range([$window.innerHeight / 8, $window.innerHeight / 2]);
+
+    var axis = d3.axisRight(scale);
+
+    d3.selectAll('.color-legend').remove();
+
+    map.append('g')
+      .attr('class', 'color-legend')
+      .attr('transform', 'translate('+ (map.attr("width") - 75)+', 0)')
+      .call(axis);
+
+    d3.selectAll('#colorLegend').remove();
+
+    map.select('defs')
+    .append('linearGradient')
+      .attr('id', 'colorLegend')
+      .selectAll('stop')
+        .data([color(Reports.min()), color(Reports.max())])
+      .enter().append('stop')
+        .attr('offset', function (d, i) {
+          return (i / 1 * 100) + '%';
+        })
+        .attr('stop-color', function (d) {
+          return d;
+        });
+
+    var legend = d3.select('.color-legend');
+
+    legend.append('rect')
+      .attr('height', 8)
+      .attr('width', scale.range()[1] - scale.range()[0])
+      .attr('x', scale.range()[0])
+      // .attr('y', -1)
+      .attr('transform', 'rotate(90)')
+      .attr('fill', 'url(#colorLegend)');
+
+    var legendMiddle = scale.range()[0] + ((scale.range()[1] - scale.range()[0]) / 2);
+
+      legend.append('text')
+      .attr('class', 'caption')
+      // .attr('x', legendMiddle)
+      .attr('x', scale.range()[0])
+      .attr('y', -40)
+      .attr('fill', '#000')
+      .attr('transform', 'rotate(90)')
+      .text('Number of reports');
   }
 
   /*
@@ -367,6 +415,8 @@ angular.module('reportApp')
         .attr('opacity', 0)
       .remove();
 
+    drawColorLegend();
+
     mask.selectAll('path').remove();
 
     mask.selectAll('path')
@@ -416,6 +466,11 @@ angular.module('reportApp')
       queryIdle = true;
       d3Reports.clear();
       Reports.subRegions().forEach(function (d){ d3Reports.set(d.region, +d.reports); });
+
+      // Set min and max for dataset
+      color.domain([Reports.min(), Reports.max()]);
+
+      // console.log(color.domain(), color.range(), color(Reports.min()));
       $scope.reportData = Reports.subRegions();
       $scope.totalReports = Reports.total();
     });

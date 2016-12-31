@@ -83,12 +83,18 @@ svg.start-date {
   left: 0;
   z-index: -10; }
 
-.time-scale path {
+.time-scale path,
+.color-legend path {
   stroke: #fff; }
-.time-scale .tick line {
+.time-scale line,
+.color-legend line {
   stroke: #fff; }
-.time-scale .tick text {
+.time-scale text,
+.color-legend text {
   fill: #fff; }
+
+.color-legend .domain {
+  display: none; }
 
 .report-map {
   position: relative; }

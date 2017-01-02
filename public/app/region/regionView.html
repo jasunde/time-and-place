@@ -3,26 +3,6 @@
     <div class="report-info col-xs-12 col-sm-4">
       <h2>Time and Place <small>Crime Reports in Chicago</small></h2>
 
-      <ul class="breadcrumb">
-        <li
-          ng-class="{'active': regionPath.length === 0}"
-          ng-click="climbUp(0)">
-          <a ng-if="regionPath.length > 0">City</a>
-          <span ng-if="regionPath.length === 0">City</span>
-        </li>
-        <li
-                ng-class="{'active': regionPath.length - 1 === $index}"
-                ng-repeat="regions in regionPath"
-                ng-click="climbUp($index + 1)">
-          <a ng-if="$index < regionPath.length - 1">
-            {{subRegionHeirarchy[$index]}} {{regionPath[$index]}}
-          </a>
-          <span ng-if="$index === regionPath.length - 1">
-            {{subRegionHeirarchy[$index]}} {{regionPath[$index]}}
-          </span>
-        </li>
-      </ul>
-
       <h3>{{timeFrame.startMoment.format(dateFormat)}} - {{timeFrame.endMoment.format(dateFormat)}} <small>Total Reports: {{totalReports}}</small>
       </h3>
       <form class="map-controls">
@@ -38,8 +18,30 @@
 
     <!-- Map -->
     <div class="report-map col-xs-12 col-sm-8">
-      <h2 class="region-title" ng-if="regionPath.length === 0">Chicago</h2>
-      <h2 class="region-title" ng-if="regionPath.length > 0">{{subRegionHeirarchy[regionPath.length - 1] | titlecase}} {{regionPath[regionPath.length - 1]}}</h2>
+    <!--   <h2 class="region-title" ng-if="regionPath.length === 0">Chicago</h2> -->
+    <!--   <h2 class="region-title" ng-if="regionPath.length > 0">{{subRegionHeirarchy[regionPath.length - 1] | titlecase}} {{regionPath[regionPath.length - 1]}}</h2> -->
+    <h2 class="text-danger">
+      <ul class="breadcrumb">
+        <li
+          ng-class="{'active': regionPath.length === 0}"
+          ng-click="climbUp(0)">
+          <a ng-if="regionPath.length > 0">Chicago</a>
+          <span ng-if="regionPath.length === 0">Chicago</span>
+        </li>
+        <li
+                ng-class="{'active': regionPath.length - 1 === $index}"
+                ng-repeat="regions in regionPath"
+                ng-click="climbUp($index + 1)">
+          <a ng-if="$index < regionPath.length - 1">
+            {{subRegionHeirarchy[$index] | titlecase}} {{regionPath[$index]}}
+          </a>
+          <span ng-if="$index === regionPath.length - 1">
+            {{subRegionHeirarchy[$index] | titlecase}} {{regionPath[$index]}}
+          </span>
+        </li>
+      </ul>
+    </h2>
+
             
       <svg id="map">
         <defs>

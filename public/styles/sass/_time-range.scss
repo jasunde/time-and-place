@@ -90,7 +90,7 @@ div.start-date {
 
 .date-input {
 	position: absolute;
-	bottom: 0;
+	bottom: 32px;
 	width: 95%;
 }
 
@@ -114,9 +114,14 @@ svg.start-date {
   text {
     fill: #fff;
   }
+
+  & > text {
+    font-size: 14px;
+  }
 }
 
-.color-legend .domain {
-  display: none;
+.color-legend {
+  & .domain {
+    display: none;
+  }
 }
-

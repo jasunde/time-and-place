@@ -17,6 +17,9 @@ body {
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%); }
 
+.region-title {
+  text-align: center; }
+
 input[type="range"] {
   -webkit-appearance: none;
      -moz-appearance: none;
@@ -83,7 +86,7 @@ div.start-date {
 
 .date-input {
   position: absolute;
-  bottom: 0;
+  bottom: 32px;
   width: 95%; }
 
 svg.start-date {
@@ -101,6 +104,9 @@ svg.start-date {
 .time-scale text,
 .color-legend text {
   fill: #fff; }
+.time-scale > text,
+.color-legend > text {
+  font-size: 14px; }
 
 .color-legend .domain {
   display: none; }

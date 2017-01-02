@@ -28,7 +28,7 @@ angular.module('reportApp')
 
       function inputDimensions() {
         svg.attr('width', input[0].clientWidth - input[0].clientHeight);
-        svg.attr('height', input[0].clientHeight * 2);
+        svg.attr('height', input[0].clientHeight * 4);
         timeLine
           .range([0,svg.attr('width')])
           .tickFormat(d3.timeYear.every(1), d3.timeFormat("%Y"));
@@ -41,9 +41,13 @@ angular.module('reportApp')
 				svg.select('.time-scale').remove();
 
         svg.append('g')
-        .attr('class', 'time-scale')
-        .attr('transform', 'translate('+input[0].clientHeight / 2+','+input[0].clientHeight / 2+')')
-        .call(axis);
+          .attr('class', 'time-scale')
+          .attr('transform', 'translate('+input[0].clientHeight / 2+','+input[0].clientHeight / 2+')')
+          .call(axis)
+        .append('text')
+          .attr('x', input[0].clientHeight / 2)
+          .attr('y', 40)
+          .text('Date');
       }
 
       window.addEventListener('resize', inputDimensions);

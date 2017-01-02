@@ -38,7 +38,9 @@
 
     <!-- Map -->
     <div class="report-map col-xs-12 col-sm-8">
-
+      <h2 class="region-title" ng-if="regionPath.length === 0">Chicago</h2>
+      <h2 class="region-title" ng-if="regionPath.length > 0">{{subRegionHeirarchy[regionPath.length - 1] | titlecase}} {{regionPath[regionPath.length - 1]}}</h2>
+            
       <svg id="map">
         <defs>
         <mask id="mask"></mask>

@@ -4,7 +4,7 @@
 
 angular.module('reportApp')
 .controller('RegionController', 
-  ['$scope', 'Reports', 'Geo', '$q', '$window', '$document', 
+  ['$scope', 'Reports', 'Geo', '$q', '$window', '$document',
   function ($scope, Reports, Geo, $q, $window, $document) {
 
   /**
@@ -14,9 +14,9 @@ angular.module('reportApp')
       path = d3.geoPath(),
       // map margin
       m = 20,
-      mapTop,
+      mapTop = 63,
       mapRight = 75,
-			mapBottom = 32,
+			mapBottom = 63,
       map,
       width, height;
 
@@ -29,8 +29,6 @@ angular.module('reportApp')
       .center([0, 41.84449380686466]);
 
   function mapDimensions() {
-    // mapTop = document.querySelector('.map-controls').clientHeight;
-    mapTop = m;
     width = document.querySelector('.report-map').clientWidth;
     height = $window.innerHeight;
 
@@ -54,7 +52,7 @@ angular.module('reportApp')
    */
   $scope.geoData = [];
 
-  var color = d3.scaleSequential(d3.interpolateBlues);
+  var color = d3.scaleSequential(d3.interpolateYlOrRd);
 
   var chart = d3.select('.chart');
 
@@ -330,14 +328,22 @@ angular.module('reportApp')
 
     d3.selectAll('#colorLegend').remove();
 
+    var colors = [];
+    for (var i = 1, len = 11; i < len; i++) {
+      colors.push(color(
+        (Reports.max() - Reports.min()) * i / 10 + Reports.min()
+      ));
+    }
+    console.log('colors', colors);
+
     map.select('defs')
     .append('linearGradient')
       .attr('id', 'colorLegend')
       .selectAll('stop')
-        .data([color(Reports.min()), color(Reports.max())])
+        .data(colors)
       .enter().append('stop')
         .attr('offset', function (d, i) {
-          return (i / 1 * 100) + '%';
+          return (i / colors.length * 100) + '%';
         })
         .attr('stop-color', function (d) {
           return d;
@@ -349,7 +355,6 @@ angular.module('reportApp')
       .attr('height', 8)
       .attr('width', scale.range()[1] - scale.range()[0])
       .attr('x', scale.range()[0])
-      // .attr('y', -1)
       .attr('transform', 'rotate(90)')
       .attr('fill', 'url(#colorLegend)');
 
@@ -383,7 +388,7 @@ angular.module('reportApp')
       parentRegion = groupBounds(data);
     }
 
-    projection.fitExtent([[m, mapTop],[width - mapRight - m, height - mapBottom - m]], parentRegion);
+    projection.fitExtent([[m, mapTop + m],[width - mapRight - m, height - mapBottom - m]], parentRegion);
     path = d3.geoPath().projection(projection);
 
     if(mapChange) {

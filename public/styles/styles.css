@@ -87,7 +87,7 @@ div.start-date {
 .date-input {
   position: absolute;
   bottom: 32px;
-  width: 95%; }
+  width: 90%; }
 
 svg.start-date {
   position: absolute;
@@ -110,6 +110,9 @@ svg.start-date {
 
 .color-legend .domain {
   display: none; }
+
+.panel-body {
+  color: #333; }
 
 .report-map {
   position: relative;

@@ -5911,6 +5911,13 @@ svg.start-date {
 .color-legend .domain {
   display: none; }
 
+.map-controls p {
+  display: inline-block;
+  padding: 6px 0; }
+.map-controls .btn-group {
+  display: block;
+  float: right; }
+
 .panel-body {
   color: #333; }
 

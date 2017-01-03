@@ -1,11 +1,9 @@
 <div class="container-fluid">
   <div class="row">
     <div class="report-info col-xs-12 col-sm-4">
-      <h2>Time and Place <small>Crime Reports in Chicago</small></h2>
+      <h1 class="text-primary">Time and Place<br/> <small>Crime Reports in Chicago</small></h1>
 
-      <how-to></how-to>
-      <h3>{{timeFrame.startMoment.format(dateFormat)}} - {{timeFrame.endMoment.format(dateFormat)}} <small>Total Reports: {{totalReports}}</small>
-      </h3>
+      <p>Current time frame: <span class="pull-right"> {{timeFrame.startMoment.format(dateFormat)}} - {{timeFrame.endMoment.format(dateFormat)}} </span></p>
       <form class="map-controls">
         <p>Time Span:</p>
         <div class="btn-group">
@@ -15,6 +13,8 @@
         </div>
 
       </form>
+
+      <how-to></how-to>
 
     </div>
 

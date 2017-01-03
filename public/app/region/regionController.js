@@ -109,7 +109,7 @@ angular.module('reportApp')
     'beat',
     'block'
   ];
-  $scope.dateFormat = 'MMMM Do YYYY';
+  $scope.dateFormat = 'MMM D, YYYY';
   $scope.regionPath = [];
   $scope.timeFrame = {
     startMoment: moment().subtract(1, 'month'),

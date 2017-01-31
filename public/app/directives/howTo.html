@@ -1,9 +1,9 @@
 <uib-accordion close-others="oneAtATime">
-    <div uib-accordion-group class="panel-default" heading="About" is-open="status.isFirstOpen" is-disabled="status.isFirstDisabled">
+    <div uib-accordion-group class="panel-default" heading="About" is-disabled="status.isFirstDisabled">
       <p>This map compares the total volume of crime reporting throughout Chicago beginning on January 1, 2001.</p>
       <p>Each frame of the map derives colors based on the minimum and maximum crimes per region in that frame</p>
     </div>
-    <div uib-accordion-group class="panel-default" heading="Controls">
+    <div uib-accordion-group class="panel-default" is-open="status.isFirstOpen" heading="Controls">
       <ul>
         <li>Select the time span with buttons.</li>
         <li>Select start date with date range slider.</li>

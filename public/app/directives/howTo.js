@@ -3,7 +3,7 @@ angular.module('reportApp')
     $scope.oneAtATime = true;
     $scope.status = {
       isCustomHeaderOpen: false,
-      isFirstOpen: false,
+      isFirstOpen: true,
       isFirstDisabled: false
     };
   })

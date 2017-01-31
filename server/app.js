@@ -1,3 +1,4 @@
+require('dotenv').config();
 var express = require('express');
 var app = express();
 var path = require('path');
@@ -5,7 +6,7 @@ var mongoConnection = require('./modules/mongoConnection');
 var reports = require('./routes/reports');
 var geo = require('./routes/geo');
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 5000);
 
 app.get('/', function functionName(req, res) {
   res.sendFile(path.join(__dirname , '../public'));

@@ -3,3 +3,5 @@ node_modules
 assets/boundaries
 .imdone
 *.ti
+*.log
+.env

@@ -8,7 +8,7 @@ var Block = require('../models/block');
 var d3 = require('d3-format');
 
 function getSubRegions(req, res) {
-  console.log('req.query:', req.query);
+  // console.log('req.query:', req.query);
 
   switch (req.query.type) {
     case 'city':

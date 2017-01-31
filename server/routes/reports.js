@@ -63,7 +63,7 @@ function groupByRegion(queryObj) {
 
   query += ' GROUP BY ' + subRegion;
 
-  console.log('See the query:', query);
+  // console.log('See the query:', query);
   return query;
 }
 
@@ -92,7 +92,7 @@ function addLengthProp(obj) {
 
 function regionCallback(req, res) {
   url = buildQueryUrl(groupByRegion(req.query));
-  console.log(url);
+  // console.log(url);
   return request.get(url, function (error, response, body) {
     if(error) {
       console.log('GET request error:', error);

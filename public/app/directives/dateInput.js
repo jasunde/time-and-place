@@ -17,7 +17,7 @@ angular.module('reportApp')
     link: function (scope, element, attrs, controllers) {
       var theAttrs = ['max', 'min', 'step', 'value', 'class'];
       var input = element.find('input');
-			console.log('input', input);
+			// console.log('input', input);
 			var d3El = d3.select(element[0]);
       var svg = d3El.select('svg');
       var div = element.find('div');

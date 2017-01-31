@@ -132,7 +132,7 @@ angular.module('reportApp')
       milliseconds: milliseconds
     });
   }
-    console.log('years', $scope.years);
+    // console.log('years', $scope.years);
 
   // Initial getReports
   $q.all([
@@ -155,7 +155,7 @@ angular.module('reportApp')
   }
 
   $scope.changeStart = function () {
-    console.log($scope.numDate);
+    // console.log($scope.numDate);
   };
 
   // Change time span with radio buttons
@@ -239,7 +239,7 @@ angular.module('reportApp')
   function datePercentage(startDate) {
     var begin = moment('2001-01-01');
     var percent = (+startDate - +begin) / (+moment() - +begin);
-    console.log(percent, $scope.maxDate);
+    // console.log(percent, $scope.maxDate);
     return Math.floor(percent * $scope.maxDate);
   }
 
@@ -334,7 +334,7 @@ angular.module('reportApp')
         (Reports.max() - Reports.min()) * i / 10 + Reports.min()
       ));
     }
-    console.log('colors', colors);
+    // console.log('colors', colors);
 
     map.select('defs')
     .append('linearGradient')

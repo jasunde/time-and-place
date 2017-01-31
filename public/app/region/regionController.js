@@ -385,7 +385,9 @@ angular.module('reportApp')
     if($scope.regionPath.length) {
       parentRegion = getRegionMap($scope.regionPath[$scope.regionPath.length - 1]);
     } else {
-      parentRegion = groupBounds(data);
+      if(data) {
+        parentRegion = groupBounds(data);
+      }
     }
 
     projection.fitExtent([[m, mapTop + m],[width - mapRight - m, height - mapBottom - m]], parentRegion);

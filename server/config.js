@@ -4,5 +4,5 @@ module.exports = {
     'beat',
     'block'
   ],
-  mongoDb: 'mongodb://localhost:27017/timeAndPlace'
+  mongoDb: process.env.MONGODB_URI || 'mongodb://localhost:27017/timeAndPlace'
 };

@@ -1,6 +1,9 @@
 {
   "name": "timeAndPlace",
   "version": "1.0.0",
+  "engines": {
+    "node": "7.2.0"
+  }
   "description": "A web app to analyze and visualize the City of Chicago's API, Crimes - 2001 to present",
   "main": "index.js",
   "scripts": {
@@ -19,7 +22,6 @@
     "express": "^4.14.0",
     "moment": "^2.17.1",
     "mongoose": "^4.7.2",
-    "node": "7.2.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.6.0",
